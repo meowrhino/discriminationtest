@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test de Discriminaciones Especulativo</title>
+  <!-- Fuentes de Google: Montserrat para encabezados y Roboto para cuerpo -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #1a1a1a;
+      --text-color: #e0e0e0;
+      --accent: #7f5af0;
+      --secondary: #2cb67d;
+      --primary-font: 'Roboto', sans-serif;
+      --heading-font: 'Montserrat', sans-serif;
+    }
+    
+    body {
+      font-family: var(--primary-font);
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 20px;
+      transition: all 0.3s;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      cursor: pointer;
+      padding: 10px 15px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: var(--bg-color);
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+    }
+    
+    .theme-toggle:hover {
+      transform: scale(1.1);
+    }
+    
+    h1, h2 {
+      font-family: var(--heading-font);
+    }
+    
+    .category {
+      background: #2d2d2d;
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      animation: fadeIn 1s ease-in;
+    }
+    
+    .question {
+      margin: 15px 0;
+      padding: 10px;
+      background: #363636;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+    
+    .question:hover {
+      background: #414141;
+    }
+    
+    label {
+      cursor: pointer;
+    }
+    
+    input[type="checkbox"] {
+      margin-right: 10px;
+      transform: scale(1.2);
+      cursor: pointer;
+    }
+    
+    button {
+      background: linear-gradient(45deg, var(--accent), var(--secondary));
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1.1em;
+      display: block;
+      margin: 20px auto;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+    
+    .results {
+      background: #252525;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 30px;
+      animation: fadeIn 1s ease-in;
+    }
+    
+    .progress-bar {
+      background: #333;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 15px;
+    }
+    
+    .progress-bar-inner {
+      height: 10px;
+      background: var(--accent);
+      transition: width 0.5s;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Modo claro */
+    body.light-theme {
+      --bg-color: #f8f9fa;
+      --text-color: #1a1a1a;
+      --accent: #6c5ce7;
+      --secondary: #00b894;
+    }
+    
+    body.light-theme .category,
+    body.light-theme .question,
+    body.light-theme .results {
+      background: #ffffff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    body.light-theme .theme-toggle {
+      background: var(--accent);
+      color: var(--bg-color);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="theme-toggle" onclick="toggleTheme()">🌓</div>
+    <h1>Test de Discriminaciones Especulativo</h1>
+    <div id="questions-container"></div>
+    <button onclick="calculateResults()">Calcular resultados</button>
+    <div class="results" id="results"></div>
+  </div>
+
+  <script>
+    // Array de 140 preguntas, distribuidas en 4 pilares (35 cada uno).
+    // Se ha revisado duplicados; por ejemplo, la pregunta repetida en racialidad (id 16) se reemplaza en id 23.
+    const questions = [
+      // PILLAR: racialidad (35 preguntas)
+      { id: 1,  text: "¿Has sentido que tu religión afecta la percepción que otros tienen de ti?", pillar: "racialidad" },
+      { id: 2,  text: "¿Te han hecho comentarios despectivos sobre tu origen étnico?", pillar: "racialidad" },
+      { id: 3,  text: "¿Has sido objeto de burlas debido a tu acento o dialecto?", pillar: "racialidad" },
+      { id: 4,  text: "¿Has tenido que justificar tu nacionalidad en tu entorno laboral?", pillar: "racialidad" },
+      { id: 5,  text: "¿Te han cuestionado tu identidad por tu apariencia racial?", pillar: "racialidad" },
+      { id: 6,  text: "¿Has experimentado exclusión en eventos sociales por tu origen?", pillar: "racialidad" },
+      { id: 7,  text: "¿Te han asignado roles estereotipados basados en tu etnia?", pillar: "racialidad" },
+      { id: 8,  text: "¿Te han hecho sentir como un forastero por tu religión o etnia?", pillar: "racialidad" },
+      { id: 9,  text: "¿Te han tratado de manera diferente en servicios públicos por tu origen?", pillar: "racialidad" },
+      { id: 10, text: "¿Te han negado oportunidades debido a prejuicios sobre tu raza?", pillar: "racialidad" },
+      { id: 11, text: "¿Has sido objeto de discriminación en instituciones educativas por tu etnia?", pillar: "racialidad" },
+      { id: 12, text: "¿Te han cuestionado tus tradiciones culturales en ámbitos profesionales?", pillar: "racialidad" },
+      { id: 13, text: "¿Has recibido comentarios despectivos sobre tu color de piel?", pillar: "racialidad" },
+      { id: 14, text: "¿Te han etiquetado de manera negativa en redes sociales por tu origen?", pillar: "racialidad" },
+      { id: 15, text: "¿Has sido excluido de ciertos espacios por tu identidad racial?", pillar: "racialidad" },
+      { id: 16, text: "¿Te han hecho sentir inferior por tu procedencia?", pillar: "racialidad" },
+      { id: 17, text: "¿Has experimentado microagresiones relacionadas con tu origen?", pillar: "racialidad" },
+      { id: 18, text: "¿Te han dicho que no encajas en la sociedad por tu apariencia?", pillar: "racialidad" },
+      { id: 19, text: "¿Has notado diferencias de trato en instituciones gubernamentales?", pillar: "racialidad" },
+      { id: 20, text: "¿Te han cuestionado tus habilidades basadas en estereotipos raciales?", pillar: "racialidad" },
+      { id: 21, text: "¿Has sido objeto de burlas por tus prácticas culturales o religiosas?", pillar: "racialidad" },
+      { id: 22, text: "¿Te han negado ciertos servicios por prejuicios relacionados con tu origen?", pillar: "racialidad" },
+      { id: 23, text: "¿Has sentido que se espera que representes a toda tu comunidad debido a tu origen?", pillar: "racialidad" },
+      { id: 24, text: "¿Has tenido que modificar tu comportamiento por miedo a ser juzgado por tu etnia?", pillar: "racialidad" },
+      { id: 25, text: "¿Te han impuesto normas basadas en tu religión en ámbitos públicos?", pillar: "racialidad" },
+      { id: 26, text: "¿Has sido excluido de promociones laborales por tu origen étnico?", pillar: "racialidad" },
+      { id: 27, text: "¿Te han tratado con desconfianza debido a tu apariencia?", pillar: "racialidad" },
+      { id: 28, text: "¿Has enfrentado comentarios ofensivos sobre tu identidad cultural?", pillar: "racialidad" },
+      { id: 29, text: "¿Te han dicho que no eres de 'verdadera' cultura debido a tu origen?", pillar: "racialidad" },
+      { id: 30, text: "¿Has sido objeto de discriminación en servicios de salud por tu etnia?", pillar: "racialidad" },
+      { id: 31, text: "¿Te han hecho sentir que debes adaptarte a otra cultura para encajar?", pillar: "racialidad" },
+      { id: 32, text: "¿Has experimentado discriminación en espacios de ocio por tu religión?", pillar: "racialidad" },
+      { id: 33, text: "¿Te han cuestionado tu pertenencia a un grupo por tu aspecto racial?", pillar: "racialidad" },
+      { id: 34, text: "¿Has sido etiquetado negativamente en eventos comunitarios por tu etnia?", pillar: "racialidad" },
+      { id: 35, text: "¿Te han negado la representación adecuada en medios por tu origen?", pillar: "racialidad" },
+
+      // PILLAR: feminidades (35 preguntas)
+      { id: 36, text: "¿Has sido juzgado por la forma en que vistes?", pillar: "feminidades" },
+      { id: 37, text: "¿Te han cuestionado tu identidad de género en entornos laborales?", pillar: "feminidades" },
+      { id: 38, text: "¿Has recibido comentarios sobre tu orientación sexual?", pillar: "feminidades" },
+      { id: 39, text: "¿Te han dicho que no encajas en los roles tradicionales de género?", pillar: "feminidades" },
+      { id: 40, text: "¿Has sido objeto de chismes por tu vida amorosa o deseos?", pillar: "feminidades" },
+      { id: 41, text: "¿Te han negado oportunidades por ser parte de la comunidad LGBT+?", pillar: "feminidades" },
+      { id: 42, text: "¿Has experimentado discriminación por tu expresión de género?", pillar: "feminidades" },
+      { id: 43, text: "¿Te han llamado a cumplir roles de género preestablecidos?", pillar: "feminidades" },
+      { id: 44, text: "¿Has sido excluido de ciertos eventos por tu identidad?", pillar: "feminidades" },
+      { id: 45, text: "¿Te han hecho sentir que no puedes mostrar tu verdadero yo en público?", pillar: "feminidades" },
+      { id: 46, text: "¿Has recibido comentarios despectivos sobre tu masculinidad o feminidad?", pillar: "feminidades" },
+      { id: 47, text: "¿Te han cuestionado por no seguir normas de comportamiento de género?", pillar: "feminidades" },
+      { id: 48, text: "¿Has sido presionado para conformarte a estereotipos de género?", pillar: "feminidades" },
+      { id: 49, text: "¿Te han juzgado por tu preferencia en parejas o relaciones?", pillar: "feminidades" },
+      { id: 50, text: "¿Has sido criticado por expresar afecto de manera no convencional?", pillar: "feminidades" },
+      { id: 51, text: "¿Te han dicho que tu orientación sexual es un problema?", pillar: "feminidades" },
+      { id: 52, text: "¿Has sentido que tu sexualidad es motivo de discriminación?", pillar: "feminidades" },
+      { id: 53, text: "¿Te han cuestionado tu capacidad para liderar debido a tu género?", pillar: "feminidades" },
+      { id: 54, text: "¿Has sido excluido de roles de liderazgo por cuestiones de género?", pillar: "feminidades" },
+      { id: 55, text: "¿Te han ignorado en conversaciones importantes por tu identidad?", pillar: "feminidades" },
+      { id: 56, text: "¿Has recibido comentarios que minimizan tu experiencia en el amor?", pillar: "feminidades" },
+      { id: 57, text: "¿Te han dicho que no eres 'suficientemente' masculino/femenino?", pillar: "feminidades" },
+      { id: 58, text: "¿Has sido objeto de chistes ofensivos relacionados con tu orientación?", pillar: "feminidades" },
+      { id: 59, text: "¿Te han cuestionado tu lugar en espacios reservados para un género?", pillar: "feminidades" },
+      { id: 60, text: "¿Has sentido que debes ocultar aspectos de tu identidad para ser aceptado?", pillar: "feminidades" },
+      { id: 61, text: "¿Te han indicado que debes actuar de una manera que no te corresponde?", pillar: "feminidades" },
+      { id: 62, text: "¿Has sido ridiculizado por romper estereotipos de género?", pillar: "feminidades" },
+      { id: 63, text: "¿Te han excluido de debates por tu identidad sexual?", pillar: "feminidades" },
+      { id: 64, text: "¿Has tenido que cambiar tu comportamiento para evitar ser discriminado?", pillar: "feminidades" },
+      { id: 65, text: "¿Te han dicho que tus deseos son inapropiados o tabú?", pillar: "feminidades" },
+      { id: 66, text: "¿Has sentido que tu vida amorosa es motivo de juicio social?", pillar: "feminidades" },
+      { id: 67, text: "¿Te han hecho sentir que perteneces a un grupo marginado por tu género?", pillar: "feminidades" },
+      { id: 68, text: "¿Has sido descalificado en discusiones por tu orientación sexual?", pillar: "feminidades" },
+      { id: 69, text: "¿Te han dicho que no puedes tener éxito debido a tu identidad de género?", pillar: "feminidades" },
+      { id: 70, text: "¿Has experimentado rechazo por parte de familiares por tu orientación?", pillar: "feminidades" },
+      
+      // PILLAR: clase (35 preguntas)
+      { id: 71, text: "¿Tienes una casa de propiedad?", pillar: "clase" },
+      { id: 72, text: "¿Pagas alquiler o hipoteca?", pillar: "clase" },
+      { id: 73, text: "¿El gasto en vivienda representa una parte importante de tus ingresos?", pillar: "clase" },
+      { id: 74, text: "¿Has tenido dificultades para acceder a servicios financieros?", pillar: "clase" },
+      { id: 75, text: "¿Te sientes presionado por tu situación económica al buscar empleo?", pillar: "clase" },
+      { id: 76, text: "¿Has experimentado discriminación laboral por tu origen social?", pillar: "clase" },
+      { id: 77, text: "¿Te han rechazado oportunidades de educación por falta de recursos?", pillar: "clase" },
+      { id: 78, text: "¿Sientes que las políticas públicas no te benefician económicamente?", pillar: "clase" },
+      { id: 79, text: "¿Has tenido que renunciar a oportunidades por razones económicas?", pillar: "clase" },
+      { id: 80, text: "¿Te han estigmatizado por vivir en un barrio de clase trabajadora?", pillar: "clase" },
+      { id: 81, text: "¿Sientes que tu estatus económico afecta tus relaciones sociales?", pillar: "clase" },
+      { id: 82, text: "¿Has sido juzgado por tu forma de vestir o de hablar?", pillar: "clase" },
+      { id: 83, text: "¿Te han hecho sentir inferior por tu posición social?", pillar: "clase" },
+      { id: 84, text: "¿Has tenido problemas para acceder a servicios de salud por tu situación económica?", pillar: "clase" },
+      { id: 85, text: "¿Sientes que no puedes competir en igualdad de condiciones debido a tu clase?", pillar: "clase" },
+      { id: 86, text: "¿Has tenido que trabajar más de un empleo para cubrir tus necesidades?", pillar: "clase" },
+      { id: 87, text: "¿Te han dicho que no eres lo suficientemente 'refinado'?", pillar: "clase" },
+      { id: 88, text: "¿Has sido excluido de ciertos círculos sociales por tu origen?", pillar: "clase" },
+      { id: 89, text: "¿Sientes que tu patrimonio limita tus oportunidades?", pillar: "clase" },
+      { id: 90, text: "¿Te han discriminado en servicios de ocio o culturales por tu clase?", pillar: "clase" },
+      { id: 91, text: "¿Has experimentado comentarios despectivos sobre tu nivel económico?", pillar: "clase" },
+      { id: 92, text: "¿Sientes que la sociedad te etiqueta por tu situación financiera?", pillar: "clase" },
+      { id: 93, text: "¿Te han cuestionado tu capacidad profesional por tu origen social?", pillar: "clase" },
+      { id: 94, text: "¿Has tenido problemas para acceder a una educación superior de calidad?", pillar: "clase" },
+      { id: 95, text: "¿Sientes que las oportunidades económicas están reservadas para otros?", pillar: "clase" },
+      { id: 96, text: "¿Has sido ignorado en procesos de selección por tu bagaje social?", pillar: "clase" },
+      { id: 97, text: "¿Te han dicho que no perteneces a ciertos ambientes por tu situación económica?", pillar: "clase" },
+      { id: 98, text: "¿Has enfrentado dificultades para acceder a créditos o préstamos?", pillar: "clase" },
+      { id: 99, text: "¿Sientes que tu origen social afecta tu seguridad en el empleo?", pillar: "clase" },
+      { id: 100, text: "¿Te han hecho sentir que debes trabajar el doble para demostrar tu valía?", pillar: "clase" },
+      { id: 101, text: "¿Has experimentado exclusión en eventos empresariales o de networking?", pillar: "clase" },
+      { id: 102, text: "¿Sientes que tu nivel socioeconómico influye en tu calidad de vida?", pillar: "clase" },
+      { id: 103, text: "¿Has tenido que renunciar a proyectos personales por falta de recursos?", pillar: "clase" },
+      { id: 104, text: "¿Te han estigmatizado por no poder costear ciertos lujos?", pillar: "clase" },
+      { id: 105, text: "¿Sientes que las oportunidades de ascenso están limitadas para ti?", pillar: "clase" },
+      
+      // PILLAR: capacitismo (35 preguntas)
+      { id: 106, text: "¿Has enfrentado barreras de accesibilidad en edificios públicos?", pillar: "capacitismo" },
+      { id: 107, text: "¿Te han negado oportunidades laborales por tu discapacidad?", pillar: "capacitismo" },
+      { id: 108, text: "¿Has sentido que los servicios de salud no se adaptan a tus necesidades?", pillar: "capacitismo" },
+      { id: 109, text: "¿Te han ignorado en situaciones en las que necesitabas ayuda especial?", pillar: "capacitismo" },
+      { id: 110, text: "¿Has tenido dificultades para acceder a transporte público adaptado?", pillar: "capacitismo" },
+      { id: 111, text: "¿Sientes que la sociedad subestima tus capacidades por tu condición?", pillar: "capacitismo" },
+      { id: 112, text: "¿Te han hecho comentarios despectivos sobre tu discapacidad?", pillar: "capacitismo" },
+      { id: 113, text: "¿Has sido excluido de eventos o actividades por falta de accesibilidad?", pillar: "capacitismo" },
+      { id: 114, text: "¿Te han cuestionado tu capacidad para desempeñar tareas cotidianas?", pillar: "capacitismo" },
+      { id: 115, text: "¿Sientes que tu entorno no se adapta a tus necesidades físicas?", pillar: "capacitismo" },
+      { id: 116, text: "¿Has tenido que luchar para recibir ajustes razonables en el trabajo?", pillar: "capacitismo" },
+      { id: 117, text: "¿Te han hecho sentir que eres una carga debido a tu discapacidad?", pillar: "capacitismo" },
+      { id: 118, text: "¿Has enfrentado actitudes paternalistas por parte de desconocidos?", pillar: "capacitismo" },
+      { id: 119, text: "¿Te han negado servicios esenciales por tu condición?", pillar: "capacitismo" },
+      { id: 120, text: "¿Sientes que los espacios públicos no son inclusivos para ti?", pillar: "capacitismo" },
+      { id: 121, text: "¿Has tenido que cambiar tu ruta por falta de infraestructura accesible?", pillar: "capacitismo" },
+      { id: 122, text: "¿Te han subestimado en entornos educativos por tu discapacidad?", pillar: "capacitismo" },
+      { id: 123, text: "¿Sientes que tus habilidades son ignoradas en conversaciones importantes?", pillar: "capacitismo" },
+      { id: 124, text: "¿Te han etiquetado de forma negativa por necesitar asistencia?", pillar: "capacitismo" },
+      { id: 125, text: "¿Has experimentado exclusión social debido a tu condición física?", pillar: "capacitismo" },
+      { id: 126, text: "¿Te han hecho sentir que debes pedir permiso para participar?", pillar: "capacitismo" },
+      { id: 127, text: "¿Sientes que los medios de comunicación representan de forma estereotipada a las personas con discapacidad?", pillar: "capacitismo" },
+      { id: 128, text: "¿Te han preguntado de forma invasiva sobre tu discapacidad?", pillar: "capacitismo" },
+      { id: 129, text: "¿Has tenido problemas para acceder a tecnologías adaptadas?", pillar: "capacitismo" },
+      { id: 130, text: "¿Te han dicho que ciertas actividades no son para ti?", pillar: "capacitismo" },
+      { id: 131, text: "¿Sientes que tu discapacidad limita tus oportunidades de liderazgo?", pillar: "capacitismo" },
+      { id: 132, text: "¿Has enfrentado barreras en eventos deportivos o culturales?", pillar: "capacitismo" },
+      { id: 133, text: "¿Te han discriminado en ambientes laborales por tus necesidades especiales?", pillar: "capacitismo" },
+      { id: 134, text: "¿Sientes que no recibes el apoyo adecuado en instituciones públicas?", pillar: "capacitismo" },
+      { id: 135, text: "¿Te han dicho que deberías conformarte con menos debido a tu condición?", pillar: "capacitismo" },
+      { id: 136, text: "¿Has sentido que tu voz no es escuchada en debates sobre accesibilidad?", pillar: "capacitismo" },
+      { id: 137, text: "¿Te han negado la posibilidad de participar en actividades recreativas?", pillar: "capacitismo" },
+      { id: 138, text: "¿Sientes que los entornos digitales no son lo suficientemente accesibles?", pillar: "capacitismo" },
+      { id: 139, text: "¿Te han hecho sentir que tu discapacidad define todas tus capacidades?", pillar: "capacitismo" },
+      { id: 140, text: "¿Has enfrentado actitudes excluyentes en espacios culturales o artísticos?", pillar: "capacitismo" }
+    ];
+    
+    // Agrupamos las preguntas por pilar
+    const pillars = {};
+    questions.forEach(q => {
+      if (!pillars[q.pillar]) {
+        pillars[q.pillar] = [];
+      }
+      pillars[q.pillar].push(q);
+    });
+    
+    const container = document.getElementById('questions-container');
+    // Orden de presentación de pilares
+    const pillarOrder = ["racialidad", "feminidades", "clase", "capacitismo"];
+    
+    pillarOrder.forEach(pillar => {
+      const section = document.createElement('div');
+      section.classList.add('category');
+      let headerText = "";
+      if(pillar === "racialidad") headerText = "Racialidad (35 preguntas)";
+      else if(pillar === "feminidades") headerText = "Feminidades (35 preguntas)";
+      else if(pillar === "clase") headerText = "Clase (35 preguntas)";
+      else if(pillar === "capacitismo") headerText = "Capacitismo (35 preguntas)";
+      const header = document.createElement('h2');
+      header.textContent = headerText;
+      section.appendChild(header);
+      
+      pillars[pillar].forEach(q => {
+        const qDiv = document.createElement('div');
+        qDiv.classList.add('question');
+        const label = document.createElement('label');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.dataset.category = pillar;
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(q.text));
+        qDiv.appendChild(label);
+        section.appendChild(qDiv);
+      });
+      
+      container.appendChild(section);
+    });
+    
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+    }
+    
+    function calculateResults() {
+      // Se obtiene el puntaje por pilar de forma dinámica según la cantidad de preguntas por cada uno
+      const categories = {
+        racialidad: { max: pillars['racialidad'].length, score: 0 },
+        feminidades: { max: pillars['feminidades'].length, score: 0 },
+        clase: { max: pillars['clase'].length, score: 0 },
+        capacitismo: { max: pillars['capacitismo'].length, score: 0 }
+      };
+      
+      document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+        const category = checkbox.dataset.category;
+        if (categories[category]) {
+          categories[category].score++;
+        }
+      });
+      
+      let resultsHTML = '<h2>Resultados</h2>';
+      let totalScore = 0;
+      let totalMax = 0;
+      
+      for (const [category, data] of Object.entries(categories)) {
+        const percentage = ((data.score / data.max) * 100).toFixed(1);
+        resultsHTML += `
+          <p><strong>${category.charAt(0).toUpperCase() + category.slice(1)}:</strong>
+          ${data.score}/${data.max} (${percentage}%)</p>
+          <div class="progress-bar">
+            <div class="progress-bar-inner" style="width: ${percentage}%;"></div>
+          </div>
+        `;
+        totalScore += data.score;
+        totalMax += data.max;
+      }
+      
+      const average = ((totalScore / totalMax) * 100).toFixed(1);
+      resultsHTML += `<h3>Puntuación total: ${totalScore}/${totalMax} (${average}%)</h3>`;
+      
+      document.getElementById('results').innerHTML = resultsHTML;
+    }
+  </script>
+</body>
+</html>
