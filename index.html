@@ -1,764 +1,889 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Test de Prejuicios</title>
-    <!-- Fuente Luckiest Guy de Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet" />
-    <style>
-        /* Estilos base */
-        body {
-            background-color: #FFF8E5; /* color de fondo claro y cálido */
-            color: #333;
-            font-family: 'Luckiest Guy', cursive, sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
-            text-align: center;
-            font-size: 2.5em;
-            margin: 10px 0 5px;
-            color: #FF4081; /* un color vibrante para el título */
-        }
-        p.intro {
-            text-align: center;
-            font-size: 1.1em;
-            margin: 5px 0 20px;
-            color: #555;
-            line-height: 1.4;
-            font-family: 'Luckiest Guy', cursive, sans-serif;
-        }
-        /* Personaje */
-        #character {
-            position: relative;
-            width: 100px;
-            height: 140px;
-            margin: 0 auto 10px;
-            cursor: pointer;
-        }
-        /* Elementos del personaje */
-        #character .head {
-            position: relative;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: #FCD7B8; /* tono piel claro por defecto, se cambiará por personaje */
-            margin: 0 auto;
-            z-index: 1;
-        }
-        #character .eye {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: #000;
-            border-radius: 50%;
-            top: 18px;
-        }
-        #character .eye-left { left: 18px; }
-        #character .eye-right { right: 18px; }
-        #character .mouth {
-            position: absolute;
-            width: 12px;
-            height: 6px;
-            top: 35px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #000;
-            border-radius: 0 0 6px 6px; /* forma de media luna (sonrisa) por defecto */
-        }
-        #character .body {
-            position: absolute;
-            top: 55px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40px;
-            height: 50px;
-            background: #8BC34A; /* color de camiseta por defecto */
-            border-radius: 15px;
-        }
-        #character .feature {
-            position: absolute;
-        }
-        /* Historieta/personality del personaje */
-        #charStory {
-            max-width: 300px;
-            margin: 0 auto 20px;
-            text-align: center;
-            font-size: 0.9em;
-            color: #333;
-            display: none;
-        }
-        /* Preguntas */
-        #questions-container {
-            max-width: 800px;
-            margin: 0 auto;
-            column-count: 2;  /* mostrar en 2 columnas en pantallas grandes */
-            column-gap: 40px;
-        }
-        @media (max-width: 600px) {
-            #questions-container {
-                column-count: 1; /* en pantallas pequeñas, 1 columna */
-            }
-        }
-        ul.question-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        ul.question-list li {
-            margin-bottom: 15px;
-        }
-        .question-text {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 0.95em;
-            line-height: 1.3;
-            color: #222;
-        }
-        .answers label {
-            display: inline-block;
-            padding: 5px 12px;
-            margin-right: 10px;
-            border: 2px solid;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.9em;
-            user-select: none;
-            transition: all 0.2s;
-        }
-        .answers label:hover {
-            transform: translateY(-2px);
-        }
-        /* Colores para Sí (orange) y No (teal) */
-        .answers label[for$="yes"] {
-            border-color: #FF9800;
-            color: #FF9800;
-        }
-        .answers label[for$="no"] {
-            border-color: #009688;
-            color: #009688;
-        }
-        /* Ocultar inputs de radio */
-        .answers input[type="radio"] {
-            display: none;
-        }
-        /* Estilos cuando está seleccionado */
-        .answers input[type="radio"]:checked + label {
-            color: #fff;
-        }
-        #questions-container input[type="radio"]:checked + label[for$="yes"] {
-            background-color: #FF9800;
-        }
-        #questions-container input[type="radio"]:checked + label[for$="no"] {
-            background-color: #009688;
-        }
-        /* Botón de resultados */
-        #submitBtn {
-            background-color: #FF4081;
-            color: #fff;
-            font-family: 'Luckiest Guy', cursive, sans-serif;
-            font-size: 1.1em;
-            border: none;
-            border-radius: 8px;
-            padding: 10px 20px;
-            cursor: pointer;
-            display: block;
-            margin: 20px auto;
-            transition: background-color 0.2s;
-        }
-        #submitBtn:hover {
-            background-color: #E91E63;
-        }
-        /* Canvas del gráfico */
-        #chartContainer {
-            width: 90%;
-            max-width: 500px;
-            margin: 30px auto;
-            text-align: center;
-        }
-        #resultChart {
-            width: 100%;
-            max-width: 500px;
-            height: auto;
-            display: none; /* oculto inicialmente */
-        }
-        /* Mensaje de captura de pantalla */
-        #screenshotMsg {
-            max-width: 500px;
-            margin: 15px auto;
-            font-size: 0.9em;
-            text-align: center;
-            color: #555;
-            display: none;
-            line-height: 1.4;
-        }
-        /* Elementos decorativos (formas de colores) */
-        .deco {
-            position: absolute;
-            opacity: 0.3;
-        }
-        .deco.circle1 {
-            width: 50px; height: 50px; background: #FF9800; border-radius: 50%; top: 20px; left: 20px;
-        }
-        .deco.circle2 {
-            width: 30px; height: 30px; background: #009688; border-radius: 50%; top: 250px; right: 20px;
-        }
-        .deco.square1 {
-            width: 40px; height: 40px; background: #9C27B0; transform: rotate(45deg); top: 100px; left: 5%;
-        }
-        .deco.square2 {
-            width: 20px; height: 20px; background: #FFC107; transform: rotate(45deg); bottom: 100px; right: 10%;
-        }
-        .deco.triangle {
-            width: 0; height: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-bottom: 35px solid #03A9F4;
-            top: 60%; left: 10%;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test de Experiencias y Derechos</title>
+  <!-- Fuentes: Luckiest Guy para títulos y Comic Neue para cuerpo -->
+  <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@300;400;700&family=Luckiest+Guy&display=swap" rel="stylesheet" />
+  <style>
+    /* Estilos base */
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Comic Neue', sans-serif;
+      transition: background 0.5s;
+      position: relative;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    header h1 {
+      font-family: 'Luckiest Guy', cursive;
+      font-size: 2.8em;
+      color: #FF4081;
+      margin-bottom: 5px;
+    }
+    header p {
+      font-size: 1.1em;
+      color: #333;
+    }
+    /* Botón de customización */
+    #customBtn {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background-color: #FF4081;
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'Luckiest Guy', cursive;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    #customBtn:hover {
+      background-color: #E91E63;
+    }
+    /* Modal Customización */
+    .modal {
+      display: none; /* Oculto por defecto */
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 400px;
+      border-radius: 10px;
+      font-family: 'Comic Neue', sans-serif;
+    }
+    .modal-content h2 {
+      margin-top: 0;
+      color: #FF4081;
+      font-family: 'Luckiest Guy', cursive;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close:hover, .close:focus {
+      color: #000;
+      text-decoration: none;
+    }
+    /* Personaje */
+    #character {
+      width: 100px;
+      height: 140px;
+      margin: 0 auto;
+      position: relative;
+      cursor: pointer;
+    }
+    #character .head {
+      position: relative;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin: 0 auto;
+      z-index: 1;
+    }
+    #character .eye {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: #000;
+      border-radius: 50%;
+      top: 18px;
+    }
+    #character .eye-left { left: 18px; }
+    #character .eye-right { right: 18px; }
+    #character .mouth {
+      position: absolute;
+      width: 12px;
+      height: 6px;
+      top: 35px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    #character .body {
+      position: absolute;
+      top: 55px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 50px;
+      border-radius: 15px;
+    }
+    #charStory {
+      max-width: 300px;
+      margin: 10px auto 20px;
+      text-align: center;
+      font-size: 0.9em;
+      color: #444;
+      display: none;
+    }
+    /* Contenedor del test */
+    #testContainer {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    /* Lista de preguntas (única columna, separadas) */
+    ul.question-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 20px 0;
+    }
+    ul.question-list li {
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .question-text {
+      display: block;
+      font-size: 1em;
+      margin-bottom: 8px;
+      color: #333;
+    }
+    .answers {
+      display: flex;
+      gap: 15px;
+    }
+    .answers input[type="radio"] {
+      display: none;
+    }
+    .answers label {
+      padding: 5px 12px;
+      border: 2px solid;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.95em;
+      transition: transform 0.2s;
+      user-select: none;
+    }
+    .answers label:hover {
+      transform: translateY(-2px);
+    }
+    /* Colores para respuestas: Sí (naranja) y No (verde azulado) */
+    .answers label[for$="yes"] {
+      border-color: #FF9800;
+      color: #FF9800;
+    }
+    .answers label[for$="no"] {
+      border-color: #009688;
+      color: #009688;
+    }
+    .answers input[type="radio"]:checked + label[for$="yes"] {
+      background-color: #FF9800;
+      color: #fff;
+    }
+    .answers input[type="radio"]:checked + label[for$="no"] {
+      background-color: #009688;
+      color: #fff;
+    }
+    /* Botón para enviar respuestas */
+    #submitBtn {
+      background-color: #FF4081;
+      color: #fff;
+      font-family: 'Luckiest Guy', cursive;
+      font-size: 1.1em;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      cursor: pointer;
+      display: block;
+      margin: 20px auto;
+      transition: background-color 0.3s;
+    }
+    #submitBtn:hover {
+      background-color: #E91E63;
+    }
+    /* Contenedor del gráfico */
+    #chartContainer {
+      max-width: 500px;
+      margin: 30px auto;
+      text-align: center;
+    }
+    #resultChart {
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+      display: none;
+    }
+    /* Mensajes de explicación y final */
+    #screenshotMsg, #resultExplanation, #finalMsg {
+      max-width: 500px;
+      margin: 15px auto;
+      font-size: 0.9em;
+      text-align: center;
+      color: #555;
+      line-height: 1.4;
+      display: none;
+    }
+    /* Pie de página */
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 0.85em;
+      color: #777;
+    }
+    /* Decoraciones aleatorias */
+    .deco {
+      position: absolute;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    .deco.circle {
+      border-radius: 50%;
+    }
+  </style>
 </head>
 <body>
-    <h1>Test de Prejuicios</h1>
-    <p class="intro">Responde <strong>Sí</strong> o <strong>No</strong> a todas las preguntas abajo. <br/>
-    Al terminar, haz clic en <em>Ver Resultados</em> para ver tu perfil.</p>
-    <!-- Personaje -->
-    <div id="character">
-        <div class="head"></div>
-        <div class="eye eye-left"></div>
-        <div class="eye eye-right"></div>
-        <div class="mouth"></div>
-        <div class="body"></div>
-        <div class="feature extra1"></div>
-        <div class="feature extra2"></div>
+  <header>
+    <h1>Test de Experiencias</h1>
+    <p>Responde <strong>Sí</strong> o <strong>No</strong> a cada pregunta sobre tus vivencias en distintos ámbitos y cómo han afectado tu derecho a una vida digna.</p>
+    <button id="customBtn">Personalizar Fondo</button>
+  </header>
+
+  <!-- Modal de Customización -->
+  <div id="customModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Personalización de Fondo</h2>
+      <p><strong>Fondo Actual:</strong> <span id="currentFondo"></span></p>
+      <p><strong>Opciones de Fondo:</strong></p>
+      <ul id="fondoList"></ul>
+      <p><strong>Preguntas por Categoría (Límite):</strong></p>
+      <ul id="limitList"></ul>
     </div>
-    <div id="charStory"></div>
-    <!-- Contenedor de preguntas -->
-    <div id="questions-container">
-        <ul class="question-list" id="questionList">
-            <!-- Las preguntas se insertarán aquí dinámicamente -->
-        </ul>
-    </div>
+  </div>
+
+  <!-- Personaje aleatorio -->
+  <div id="character">
+    <div class="head"></div>
+    <div class="eye eye-left"></div>
+    <div class="eye eye-right"></div>
+    <div class="mouth"></div>
+    <div class="body"></div>
+    <div class="feature extra1"></div>
+    <div class="feature extra2"></div>
+  </div>
+  <div id="charStory"></div>
+
+  <!-- Contenedor del test -->
+  <div id="testContainer">
+    <ul class="question-list" id="questionList">
+      <!-- Las preguntas se insertarán dinámicamente -->
+    </ul>
     <button id="submitBtn">Ver Resultados</button>
-    <!-- Contenedor del gráfico de resultados -->
-    <div id="chartContainer">
-        <canvas id="resultChart"></canvas>
-    </div>
-    <div id="screenshotMsg"></div>
+  </div>
 
-    <!-- Cargar Chart.js (desde CDN) -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-    // Definición de preguntas por categoría (arrays de strings)
-    var preguntasRacial = [
-        "¿Crees que algunas razas o etnias son más inteligentes que otras?",
-        "Si un familiar tuyo se casara con alguien de otra raza, ¿te incomodaría?",
-        "¿Has contado o reído chistes basados en estereotipos raciales?",
-        "¿Te sentirías inseguro caminando por un barrio donde la mayoría de residentes son de otra raza que la tuya?",
-        "¿Piensas que las personas de ciertas etnias tienen tendencias naturales hacia el crimen o la violencia?",
-        "Al conocer a una persona, ¿te fijas en su color de piel antes que en otras cualidades?",
-        "¿Crees que la discriminación racial ya no es un problema importante en la sociedad actual?",
-        "¿Te incomoda ver parejas interraciales?",
-        "¿Has pensado alguna vez que alguien obtuvo un trabajo o beca solo por su raza y no por sus méritos?",
-        "Si un desconocido de otra raza se te acerca en la calle para pedirte ayuda, ¿dudarías más en ayudarlo que si fuera de tu raza?",
-        "¿Crees que es aceptable decir \"regresa a tu país\" a alguien nacido en tu país pero de diferente origen étnico?",
-        "¿Has usado palabras despectivas para referirte a personas de otra raza (aunque sea en privado)?",
-        "¿Te parece que exageran las personas que denuncian racismo en bromas o comentarios cotidianos?",
-        "¿Preferirías evitar comprar en un negocio atendido por personas de cierta etnia?",
-        "¿Asumes que alguien es bueno en cierto deporte o música solo por su origen étnico?",
-        "Si tu jefe inmediato fuera de una raza minoritaria distinta a la tuya, ¿te costaría aceptar sus órdenes o liderazgo?",
-        "¿Crees que en ciertos países la gente es 'de tal manera' (perezosa, sucia, fría, etc.) por su raza u origen?",
-        "¿Te molesta cuando una persona de otra raza destaca o tiene éxito en un ámbito donde tu grupo suele dominar?",
-        "¿Te has alejado deliberadamente de alguien en un espacio público por prejuicios sobre su raza?",
-        "¿Crees que es normal preferir amistad con personas de tu misma raza y que no es racismo sino “gustos personales”?",
-        "¿Evitarías que tus hijos jugaran con niños de otra etnia o raza?"
+  <!-- Contenedor para el gráfico de resultados -->
+  <div id="chartContainer">
+    <canvas id="resultChart"></canvas>
+  </div>
+  <div id="screenshotMsg"></div>
+  <div id="resultExplanation"></div>
+  <div id="finalMsg"></div>
+
+  <footer>
+    &copy; 2025 Test de Experiencias. ¡Vive, siente y conoce tus derechos!
+  </footer>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    /********** CONFIGURACIÓN **********/
+    // Para limitar el número de preguntas por categoría (null = todas)
+    const questionsLimit = {
+      racial: null,
+      genero: null,
+      religiosa: null,
+      capacitista: null,
+      cultural: null,
+      socioeconomica: null,
+      edad: null
+    };
+
+    /********** PREGUNTAS POR CATEGORÍA **********/
+    const preguntasRacial = [
+      { texto: "¿Alguna vez te han negado la posibilidad de alquilar o comprar una vivienda por tu color de piel u origen étnico?", categoria: "racial" },
+      { texto: "¿Te han rechazado en un empleo o ascenso por motivos relacionados con tu raza u origen étnico, a pesar de estar calificado/a?", categoria: "racial" },
+      { texto: "¿Has sentido que recibías un salario más bajo o peores condiciones laborales que colegas con las mismas funciones por tu origen racial o étnico?", categoria: "racial" },
+      { texto: "¿Algún compañero, cliente o jefe te ha hecho comentarios racistas o despectivos sobre tu origen en el ámbito laboral?", categoria: "racial" },
+      { texto: "En la escuela o universidad, ¿sufriste trato injusto, burlas o menor atención de profesores por tu pertenencia racial o étnica?", categoria: "racial" },
+      { texto: "¿Te han negado la entrada a un local, restaurante o club debido a tu raza, color de piel o aspecto étnico?", categoria: "racial" },
+      { texto: "¿Has notado que te vigilan en tiendas solo por tu apariencia racial o étnica, asumiendo que podrías robar?", categoria: "racial" },
+      { texto: "¿Te ha detenido o interrogado la policía sin motivo, basándose únicamente en tu color de piel o rasgos étnicos?", categoria: "racial" },
+      { texto: "¿Has recibido insultos o agresiones físicas de desconocidos por motivos raciales?", categoria: "racial" },
+      { texto: "¿Te has sentido inseguro/a en espacios públicos debido a incidentes racistas previos o un ambiente hostil hacia tu origen?", categoria: "racial" },
+      { texto: "¿Algún profesional de la salud ha minimizado tus síntomas por prejuicios relacionados con tu raza u origen étnico?", categoria: "racial" },
+      { texto: "¿Has sentido la necesidad de modificar tu forma de hablar, vestir o comportarte para evitar estereotipos relacionados con tu grupo étnico?", categoria: "racial" },
+      { texto: "¿Te han presionado a renunciar a prácticas culturales (como tu idioma o costumbres) para ser aceptado/a en la sociedad mayoritaria?", categoria: "racial" },
+      { texto: "¿Te han dicho frases como '¡Regresa a tu país!' u otros comentarios despectivos solo por tu apariencia?", categoria: "racial" },
+      { texto: "¿Te han impedido el ingreso a algún evento o espacio comunitario por no ser de la etnia mayoritaria?", categoria: "racial" },
+      { texto: "¿Has perdido oportunidades profesionales o académicas al preferir a personas de otro origen, aun estando tú calificado/a?", categoria: "racial" },
+      { texto: "¿Te has sentido aislado/a o excluido/a en reuniones sociales o vecindarios por tu origen racial?", categoria: "racial" },
+      { texto: "Al solicitar servicios públicos, ¿has notado un trato de desconfianza o lentitud por tu origen étnico?", categoria: "racial" },
+      { texto: "¿Has sido objeto de caricaturas o chistes ofensivos en medios o redes sociales por tu raza u origen?", categoria: "racial" },
+      { texto: "¿Has sufrido acoso en redes sociales con insultos racistas dirigidos hacia ti?", categoria: "racial" }
     ];
 
-    var preguntasGenero = [
-        "¿Crees que los hombres están naturalmente más capacitados para ciertas tareas o trabajos que las mujeres?",
-        "¿Piensas que las mujeres deberían ser las principales encargadas de las tareas del hogar?",
-        "¿Te incomoda ver a un hombre expresar abiertamente sus emociones (por ejemplo, llorar)?",
-        "¿Crees que los hombres son mejores conductores que las mujeres?",
-        "Si un jefe es mujer, ¿tiendes a cuestionar más sus decisiones que si fuera hombre?",
-        "¿Has hecho o reído chistes machistas (que ridiculizan a las mujeres por ser mujeres)?",
-        "¿Te parece que cuando una mujer se enfada es \"histérica\" pero si un hombre lo hace es algo normal?",
-        "¿Piensas que un hombre que decide quedarse en casa a cuidar a los hijos es menos hombre?",
-        "¿Te molesta o extraña ver mujeres en trabajos tradicionalmente masculinos (ejemplo: mecánica, construcción)?",
-        "¿Crees que las personas transgénero están equivocadas y su género \"real\" es el de nacimiento?",
-        "¿Evitarías usar los pronombres o el nombre preferido de una persona trans porque \"no es su género real\"?",
-        "¿Consideras que los hombres no deben realizar tareas consideradas femeninas, como cocinar o limpiar, en la misma medida?",
-        "¿Crees que las mujeres son demasiado emocionales para puestos de alta responsabilidad?",
-        "Si vieras a un niño jugando con muñecas o a una niña jugando con coches, ¿tratarías de redirigirlo hacia juegos \"propios de su género\"?",
-        "¿Te incomoda la idea de tener un colega cercano que sea no binario (que no se identifica como hombre ni mujer)?",
-        "¿Crees que en un equipo de trabajo mixto, las mujeres deberían asumir roles más de apoyo y los hombres liderar?",
-        "¿Has cuestionado la competencia de una profesional (doctora, ingeniera) solo por ser mujer, pensando que un hombre lo haría mejor?",
-        "¿Opinas que los hombres gays no encajan en tu concepto de \"verdadero hombre\"?",
-        "¿Te resultaría incómodo que tu hijo/a tuviera como profesor a alguien transgénero o no binario?",
-        "¿Crees que las mujeres que se visten de manera provocativa son responsables si sufren acoso?",
-        "¿Pensarías que algo \"anda mal\" si una niña nunca quiere vestir de rosa ni jugar con muñecas?"
+    const preguntasGenero = [
+      { texto: "¿Alguna vez te han pagado menos que a colegas del otro género por el mismo trabajo, solo por tu género?", categoria: "genero" },
+      { texto: "¿Te han descartado para un empleo o ascenso por ser mujer, por asumir que podrías tener responsabilidades familiares?", categoria: "genero" },
+      { texto: "¿En una entrevista laboral te han preguntado si planeas tener hijos, sugiriendo que afectará tu desempeño?", categoria: "genero" },
+      { texto: "En tu trabajo, ¿se minimizan tus ideas o te interrumpen por ser mujer, especialmente en entornos dominados por hombres?", categoria: "genero" },
+      { texto: "¿Alguna vez has sido acosada sexualmente o has recibido comentarios sexuales no deseados en el ámbito laboral?", categoria: "genero" },
+      { texto: "¿Has evitado ciertos estudios o posiciones de liderazgo por el mensaje de que 'no son para mujeres'?", categoria: "genero" },
+      { texto: "¿Te han calificado de 'mandona' o 'agresiva' por expresar opiniones firmes, mientras que a un hombre no se le critica lo mismo?", categoria: "genero" },
+      { texto: "¿Te han negado un servicio médico relacionado con tu salud reproductiva, limitando tu autonomía sobre tu cuerpo?", categoria: "genero" },
+      { texto: "¿Algún profesional de la salud ha atribuido tu dolor o síntomas a 'cosas de mujeres' en lugar de evaluarte seriamente?", categoria: "genero" },
+      { texto: "¿Has sentido miedo de transitar sola por la noche debido al riesgo de acoso o violencia de género?", categoria: "genero" },
+      { texto: "Si sufriste acoso o violencia, ¿te han culpado a ti por 'cómo te vestías o comportabas' en lugar de responsabilizar al agresor?", categoria: "genero" },
+      { texto: "¿Te han presionado a vestir de cierta manera o limitar tu expresión personal por estereotipos de género?", categoria: "genero" },
+      { texto: "En entornos de capacitación, ¿te han dado menos oportunidades en tareas técnicas o científicas por ser mujer?", categoria: "genero" },
+      { texto: "¿En trámites legales te han insinuado que necesitas la aprobación de un hombre para tomar decisiones?", categoria: "genero" },
+      { texto: "¿Te han obligado a asumir la mayor parte de las tareas domésticas o de cuidado familiar, aun trabajando fuera?", categoria: "genero" },
+      { texto: "¿Alguna vez te han dicho que 'los hombres no lloran' o se te ha criticado por mostrar emociones?", categoria: "genero" },
+      { texto: "¿En el trabajo, ¿te han desanimado de tomar licencia por paternidad/maternidad, insinuando que es 'cosa de mujeres'?", categoria: "genero" },
+      { texto: "¿Has ocultado tu orientación sexual o identidad de género en ambientes laborales o familiares por miedo a represalias?", categoria: "genero" },
+      { texto: "¿Te han negado el acceso a servicios o te han rechazado como cliente por tu orientación sexual o identidad de género?", categoria: "genero" },
+      { texto: "¿En espacios públicos te han agredido o insultado por mostrar afecto con tu pareja del mismo sexo?", categoria: "genero" },
+      { texto: "¿Has sido objeto de amenazas o violencia física por ser LGBT+?", categoria: "genero" },
+      { texto: "¿Te han sugerido que ocultes o 'cambies' tu orientación sexual o identidad para ser aceptado/a?", categoria: "genero" },
+      { texto: "¿Alguna institución religiosa te ha rechazado o expulsado por tu orientación sexual o identidad de género?", categoria: "genero" },
+      { texto: "¿Sientes que las leyes de tu país te impiden vivir plenamente por tu orientación sexual o identidad de género?", categoria: "genero" },
+      { texto: "¿Te han negado la entrada a baños públicos o vestuarios por no encajar en las expectativas de género?", categoria: "genero" },
+      { texto: "¿Alguna vez te han tratado como si estuvieras 'enfermo/a' o te ofrecieron alguna 'cura' por tu orientación o identidad?", categoria: "genero" },
+      { texto: "¿Has perdido amistades o apoyo al revelar tu orientación sexual o identidad de género debido a prejuicios?", categoria: "genero" }
     ];
 
-    var preguntasReligiosa = [
-        "¿Consideras que tu religión o creencias son superiores a las de otras personas?",
-        "¿Te incomoda trabajar o estudiar junto a alguien que practique una religión muy distinta a la tuya?",
-        "¿Piensas automáticamente que alguien de cierta religión, por ejemplo musulmán, podría ser un extremista o peligroso?",
-        "¿Has hecho bromas o comentarios negativos generalizando sobre una religión (ejemplo: todos los __ son __)?",
-        "Si un amigo cercano se convirtiera a otra religión, ¿te costaría aceptarlo o entenderlo?",
-        "¿Crees que las personas sin religión (ateos) tienen menos valores morales que las religiosas?",
-        "¿Te molesta ver a personas exhibiendo símbolos religiosos (cruz, velo, turbante) en lugares públicos?",
-        "¿Evitarías que tu hijo/a se casara con alguien de cierta religión que desapruebas?",
-        "¿Piensas que algunas religiones modernas son sectas peligrosas sin realmente informarte de ellas?",
-        "¿Has excluido o dejado de invitar a alguien a eventos sociales por sus creencias religiosas?",
-        "¿Crees que las personas muy devotas de su religión son ignorantes o han sido \"lavadas del cerebro\"?",
-        "¿Te sientes incómodo discutiendo temas científicos con alguien muy religioso porque asumes que no entenderá?",
-        "Si un compañero de trabajo pide tiempo para orar durante el día, ¿te parecería inapropiado en el entorno laboral?",
-        "¿Crees que algunas religiones promueven únicamente cosas malas y no pueden tener aspectos positivos?",
-        "Si tuvieras un jefe de una religión minoritaria, ¿dudarías de sus decisiones por sus creencias?",
-        "¿Te burlarías o harías comentarios sarcásticos si alguien te dice que confía en la voluntad de Dios?",
-        "¿Has evitado entablar amistad con alguien tras enterarte de que practica una religión que consideras rara?",
-        "¿Crees que las guerras y conflictos siempre son culpa de la religión y que el mundo estaría mejor sin ninguna?",
-        "¿Te molestaría que se construyera un centro de culto (iglesia, mezquita, etc.) de una religión ajena cerca de tu comunidad?",
-        "¿Piensas que las festividades religiosas de otras culturas son extrañas o ridículas?",
-        "¿Tratas con menos respeto a alguien que sabes que tiene creencias muy distintas a las tuyas?"
+    const preguntasReligiosa = [
+      { texto: "¿Alguna vez te han insultado o agredido por practicar tu religión o por la forma en que vistes tus símbolos religiosos?", categoria: "religiosa" },
+      { texto: "¿Te han negado un empleo o ascenso, o incluso despedido, por tus creencias religiosas?", categoria: "religiosa" },
+      { texto: "¿Alguna institución se ha negado a hacer ajustes para que practiques tu religión (como permitir días festivos o dietas especiales)?", categoria: "religiosa" },
+      { texto: "¿Has sentido que debes ocultar tus creencias en el trabajo o la escuela para evitar burlas o trato desfavorable?", categoria: "religiosa" },
+      { texto: "¿Te han prohibido llevar indumentaria o símbolos religiosos en espacios públicos o laborales?", categoria: "religiosa" },
+      { texto: "En la escuela, ¿sufriste exclusión o burlas por pertenecer a una minoría religiosa?", categoria: "religiosa" },
+      { texto: "¿Te han dificultado alquilar o comprar una vivienda al saber de tu religión (por decoraciones o apellidos)?", categoria: "religiosa" },
+      { texto: "¿Has tenido dificultades para recibir atención de salud o justicia por prejuicios contra tu religión?", categoria: "religiosa" },
+      { texto: "¿Alguna vez te han culpado de un evento negativo solo por compartir la misma religión que el autor?", categoria: "religiosa" },
+      { texto: "¿Te han excluido o tratado con recelo en tu comunidad local por practicar una religión minoritaria?", categoria: "religiosa" },
+      { texto: "¿Han vandalizado o profanado objetos o lugares importantes para tu práctica religiosa?", categoria: "religiosa" },
+      { texto: "¿Has evitado realizar prácticas religiosas en público por temor a reacciones hostiles?", categoria: "religiosa" },
+      { texto: "¿Has sentido la necesidad de cambiar u ocultar tu nombre para evitar discriminación por tu religión?", categoria: "religiosa" },
+      { texto: "¿Alguna escuela se negó a inscribir a tu hijo/a o no hizo adaptaciones por tu religión?", categoria: "religiosa" },
+      { texto: "¿Te han impedido participar plenamente en ceremonias cívicas por tu religión?", categoria: "religiosa" },
+      { texto: "¿Te han presionado a renunciar a tu fe o cambiar de credo bajo amenazas sociales o legales?", categoria: "religiosa" },
+      { texto: "¿Te has sentido discriminado/a por ser ateo/agnóstico en un entorno mayoritariamente religioso?", categoria: "religiosa" }
     ];
 
-    var preguntasCapacitista = [
-        "¿Crees que las personas con discapacidad deben centrarse en sus limitaciones y no intentar ciertas cosas?",
-        "¿Te sientes incómodo al interactuar con alguien que tiene una discapacidad visible porque no sabes cómo actuar?",
-        "¿Has usado términos ofensivos para referirte a personas con discapacidad (aunque sea bromeando)?",
-        "¿Asumes que una persona en silla de ruedas también tiene alguna discapacidad mental, o viceversa?",
-        "Si tu empresa tuviera que contratar a un candidato con una discapacidad evidente, ¿pensarías que sería menos productivo que los demás?",
-        "¿Te molesta si alguien con discapacidad recibe adaptaciones especiales (rampas, horarios) porque lo ves como trato preferencial?",
-        "¿Crees que las personas con trastornos mentales (depresión, ansiedad, etc.) exageran y deberían simplemente \"echarle ganas\"?",
-        "¿Evitarías salir románticamente con alguien solo por enterarte de que tiene una discapacidad?",
-        "¿Tiendes a hablarle más fuerte o más lento a alguien con discapacidad sin que te lo pidan, como si no pudiera entenderte?",
-        "¿Has pensado que ciertas actividades (viajar solo, vivir independiente) no son para personas con discapacidad?",
-        "¿Crees que todas las personas con autismo, síndrome de Down u otras condiciones son más o menos iguales en comportamiento?",
-        "¿Te incomoda ver a una pareja donde una persona tiene discapacidad y la otra no?",
-        "Si ves a alguien usando un estacionamiento para discapacitados sin aparentemente tener nada, ¿asumes que está abusando de ello (aunque podría tener una discapacidad invisible)?",
-        "¿Piensas que los atletas paralímpicos no son tan atletas como los olímpicos?",
-        "¿Te daría miedo o rechazo interactuar con alguien con una discapacidad cognitiva severa?",
-        "¿Crees que se gasta demasiado en hacer sitios accesibles para relativamente pocas personas?",
-        "¿Te sorprende en exceso cuando una persona con discapacidad logra algo, como si fuera extraordinario solo por su condición?",
-        "¿Has evitado conversar con alguien en silla de ruedas u otra ayuda técnica porque no sabías cómo saludarlo normalmente?",
-        "¿Crees que las personas con discapacidad deben \"aceptar sus límites\" y no intentar integrarse en todos los ámbitos?",
-        "¿Te molestaría tener un jefe o líder de equipo con una discapacidad significativa?",
-        "¿Alguna vez has dudado de la veracidad de la discapacidad de alguien pensando que tal vez exagera o finge?"
+    const preguntasCapacitista = [
+      { texto: "¿Alguna vez te han negado un empleo o ascenso tras saber de tu discapacidad, aun cuando estabas capacitado/a?", categoria: "capacitista" },
+      { texto: "En el trabajo, ¿has sentido que te asignan tareas por debajo de tus capacidades debido a tu discapacidad?", categoria: "capacitista" },
+      { texto: "¿Algún compañero o jefe ha hecho chistes o comentarios despectivos sobre tu discapacidad?", categoria: "capacitista" },
+      { texto: "¿Te han rechazado al intentar alquilar una vivienda o te han puesto trabas excesivas por tener una discapacidad?", categoria: "capacitista" },
+      { texto: "¿Has tenido que renunciar a usar transporte público o taxis por no estar adaptados a tus necesidades?", categoria: "capacitista" },
+      { texto: "¿Te han negado la entrada a un local o cine por ir acompañado/a de tu ayuda técnica (por ejemplo, un perro guía)?", categoria: "capacitista" },
+      { texto: "¿Has descubierto que un edificio público o privado esencial no es accesible para ti?", categoria: "capacitista" },
+      { texto: "¿Algún profesional de la salud ha atribuido todos tus problemas a tu discapacidad sin evaluarte adecuadamente?", categoria: "capacitista" },
+      { texto: "En tu época escolar, ¿te excluyeron de actividades o excursiones por tener una discapacidad?", categoria: "capacitista" },
+      { texto: "¿Te han aislado o separado de otros estudiantes en la escuela solo por tu discapacidad?", categoria: "capacitista" },
+      { texto: "¿Has sido víctima de burlas o acoso en la escuela, trabajo o comunidad por tu discapacidad?", categoria: "capacitista" },
+      { texto: "¿Has evitado buscar atención médica por experiencias previas de trato inadecuado relacionado con tu discapacidad?", categoria: "capacitista" },
+      { texto: "¿Te han hablado como si fueras un/a niño/a por tener una discapacidad, minimizando tus capacidades?", categoria: "capacitista" },
+      { texto: "¿Alguna persona o institución ha tomado decisiones por ti sin consultarte, asumiendo que no puedes decidir por ti mismo/a?", categoria: "capacitista" },
+      { texto: "¿Se te ha impedido formar una familia o te han quitado la custodia de tus hijos por suposiciones sobre tu discapacidad?", categoria: "capacitista" },
+      { texto: "¿Has sentido la necesidad de ocultar o minimizar tu discapacidad para ser tratado/a como 'normal'?", categoria: "capacitista" },
+      { texto: "¿Te han negado un seguro médico o te han cobrado tarifas muy altas por tener una discapacidad?", categoria: "capacitista" },
+      { texto: "¿Alguna autoridad te ha tratado con fuerza excesiva o te ha detenido injustificadamente por no entender tu discapacidad?", categoria: "capacitista" },
+      { texto: "¿Has encontrado barreras para ejercer tus derechos cívicos (como votar) por la falta de adaptaciones en el lugar?", categoria: "capacitista" },
+      { texto: "¿Has recibido comentarios hirientes que minimizan las dificultades reales de tu discapacidad en lugar de ofrecer comprensión?", categoria: "capacitista" },
+      { texto: "¿Te han rechazado como pareja o te han hecho sentir menos deseable por tener una discapacidad?", categoria: "capacitista" }
     ];
 
-    var preguntasCultural = [
-        "¿Crees que tu cultura o país es en general mejor que otros?",
-        "¿Te molesta cuando escuchas a personas hablando en un idioma que no entiendes en público?",
-        "¿Has imitado o exagerado el acento de alguien de otra región o país para burlarte?",
-        "¿Piensas que los inmigrantes suelen traer problemas o delincuencia al país?",
-        "¿Prefieres no ver películas o series de cierto país porque asumes que no serán buenas solo por su origen?",
-        "¿Te has quejado de que en tu país hay costumbres extranjeras que arruinan la cultura local?",
-        "¿Crees que es justificable desconfiar de alguien que habla con fuerte acento extranjero en tu idioma?",
-        "¿Evitarías que tu hijo hiciera amistad con un niño que no hable bien tu idioma?",
-        "¿Te parece que ciertas comunidades inmigrantes no se esfuerzan por integrarse y eso te molesta?",
-        "¿Has usado expresiones como \"tercermundista\" de forma despectiva para referirte a algo de otro país?",
-        "Si recibes atención al cliente por teléfono y la persona tiene acento extranjero, ¿dudas de su capacidad o te molesta?",
-        "¿Crees que hay nacionalidades naturalmente más trabajadoras y otras más perezosas?",
-        "¿Te sientes incómodo cuando eres la única persona de tu nacionalidad en un grupo?",
-        "¿Has pensado que las personas que no hablan bien tu idioma son menos inteligentes?",
-        "¿Te molesta cuando los inmigrantes mantienen sus costumbres en lugar de adoptar por completo las locales?",
-        "¿Evitarías visitar ciertos países porque crees que su gente no te trataría bien por ser extranjero?",
-        "¿Crees que en tu país deberían restringir la entrada a personas de ciertos países o culturas?",
-        "¿Te ofende que alguien de otro país critique aspectos de tu cultura?",
-        "¿Has tenido prejuicios contra alguien por provenir de una región específica de tu propio país?",
-        "¿Crees que la globalización está diluyendo la identidad nacional y eso te preocupa?",
-        "¿Evitarías probar la comida típica de alguna cultura por prejuicios sobre sus ingredientes o higiene?"
+    const preguntasCultural = [
+      { texto: "¿Has sentido que tu nombre, acento o aspecto cultural te cerró puertas laborales?", categoria: "cultural" },
+      { texto: "¿Te han ofrecido un salario menor o peores condiciones por ser extranjero/a o de una cultura minoritaria?", categoria: "cultural" },
+      { texto: "¿Algún jefe o compañero se ha burlado de tu acento o forma de hablar, diciendo que 'debes mejorar tu idioma'?", categoria: "cultural" },
+      { texto: "¿Te han pedido requisitos extra o depósitos altos al alquilar una vivienda al saber que eres de otra cultura?", categoria: "cultural" },
+      { texto: "¿Has recibido comentarios ofensivos o rechazo de vecinos por practicar tus costumbres tradicionales?", categoria: "cultural" },
+      { texto: "¿Te han negado el servicio en un establecimiento al notar que eres extranjero/a o perteneces a una minoría cultural?", categoria: "cultural" },
+      { texto: "¿En la calle te han gritado '¡Vete a tu país!' u otros insultos por tu acento o nacionalidad?", categoria: "cultural" },
+      { texto: "¿Has sentido temor de hablar tu lengua materna en público por recibir miradas hostiles?", categoria: "cultural" },
+      { texto: "¿Tus hijos o tú han enfrentado discriminación en la escuela por no dominar el idioma local o por su origen?", categoria: "cultural" },
+      { texto: "¿En la escuela se han burlado de tu comida, vestimenta o festividades tradicionales, haciéndote sentir avergonzado/a de tu cultura?", categoria: "cultural" },
+      { texto: "¿Has notado que la policía te detiene o revisa más frecuentemente por tu apariencia extranjera?", categoria: "cultural" },
+      { texto: "¿Has tenido problemas para recibir atención médica adecuada por falta de intérprete o por asumir cosas sobre tu nacionalidad?", categoria: "cultural" },
+      { texto: "¿Te han excluido de actividades cívicas por no ser considerado/a 'de aquí' debido a tu origen?", categoria: "cultural" },
+      { texto: "¿Has sufrido explotación laboral (jornadas largas, pago injusto) por tu situación migratoria?", categoria: "cultural" },
+      { texto: "¿Sientes que debes esforzarte el doble para demostrar tu valía por venir de otra cultura o país?", categoria: "cultural" },
+      { texto: "¿Has perdido oportunidades de amistad o pareja por el rechazo de tu origen cultural?", categoria: "cultural" },
+      { texto: "¿Alguna oficina gubernamental complicó tus trámites al ver que eres inmigrante?", categoria: "cultural" },
+      { texto: "¿Te han negado ofertas de empleo o becas por no tener la nacionalidad local, aun cuando llevas tiempo residiendo en el país?", categoria: "cultural" },
+      { texto: "¿En redes sociales has recibido mensajes de odio o burlas por tu idioma, acento o cultura?", categoria: "cultural" },
+      { texto: "¿Te han etiquetado despectivamente de 'extranjero' al participar en actividades locales?", categoria: "cultural" }
     ];
 
-    var preguntasSocioeconomica = [
-        "¿Crees que si alguien es pobre es mayormente por falta de esfuerzo?",
-        "¿Te has referido despectivamente a personas de bajos recursos con términos ofensivos (ejemplo: vagos)?",
-        "¿Te sentirías incómodo teniendo una cita con alguien de un nivel socioeconómico mucho más bajo que el tuyo?",
-        "¿Crees que las personas que viven en la calle seguramente hicieron algo para merecerlo?",
-        "Si alguien se veste con ropa muy humilde o gastada, ¿lo tratas diferente que a alguien con ropa elegante?",
-        "¿Evitarías ir a la casa de alguien si vive en un barrio muy pobre o conocido por la delincuencia?",
-        "¿Crees que las personas con menos educación formal son menos inteligentes o cultas?",
-        "¿Te molesta ver a personas de bajos recursos recibiendo ayudas del gobierno?",
-        "¿Has pensado que la gente pobre tiene valores diferentes o inferiores a los tuyos?",
-        "¿Tratarías con mayor respeto a alguien que sabes que es millonario frente a alguien de clase media?",
-        "¿Te parece mal que personas de bajos recursos accedan a lugares o servicios \"exclusivos\"?",
-        "¿Crees que la gente rica es generalmente egoísta o superficial?",
-        "Si invitaras amigos a tu casa, ¿te avergonzaría si fuera mucho más humilde que la de ellos?",
-        "¿Has evitado una amistad tras descubrir que la persona tenía mucho menos dinero que tú?",
-        "¿Piensas que la gente de clase alta suele mirar en menos a los demás (y por eso evitas tratarlos)?",
-        "¿Te incomodaría que tu hijo se case con alguien de una familia mucho más pobre?",
-        "¿Crees que la gente de barrios marginales no quiere mejorar su situación?",
-        "¿Evitas lugares donde suele haber muchos vendedores ambulantes o gente pidiendo dinero?",
-        "¿Te sientes incómodo en reuniones donde hay personas de niveles económicos muy diversos?",
-        "¿Crees que alguien con un coche muy viejo es menos exitoso que quien tiene uno nuevo?",
-        "¿Has pensado que ciertos servicios de calidad deberían ser privilegio de quien pueda pagarlos y no para todos?"
+    const preguntasSocioeconomica = [
+      { texto: "¿Vives o has vivido en un barrio con servicios deficientes por limitaciones económicas, sintiendo que las autoridades descuidan tu zona?", categoria: "socioeconomica" },
+      { texto: "¿Te han negado alquilar un departamento o exigido avales muy altos al saber que tus ingresos son bajos?", categoria: "socioeconomica" },
+      { texto: "Cuando eras niño/a, ¿sufriste burlas o aislamiento por no tener ropa de marca o dispositivos modernos?", categoria: "socioeconomica" },
+      { texto: "¿Te has visto obligado/a a abandonar estudios o trabajar desde joven para ayudar económicamente a tu familia?", categoria: "socioeconomica" },
+      { texto: "¿Te han juzgado al acudir a oficinas de asistencia social, como si abusaras del sistema por ser pobre?", categoria: "socioeconomica" },
+      { texto: "¿En tiendas o centros comerciales, guardias te han seguido por tu apariencia sencilla, asumiendo que podrías robar?", categoria: "socioeconomica" },
+      { texto: "¿Te han excluido de círculos sociales o eventos por no poder costear la cuota o el gasto que implican?", categoria: "socioeconomica" },
+      { texto: "¿Algún banco u otra institución te negó un préstamo o servicio básico al ver que provienes de una zona humilde?", categoria: "socioeconomica" },
+      { texto: "¿Has sentido la necesidad de ocultar tu nivel de ingresos o lugar de residencia por miedo a ser juzgado/a?", categoria: "socioeconomica" },
+      { texto: "En tu trabajo, ¿te han pagado por debajo del salario mínimo, sin contrato o prestaciones, aprovechándose de tu necesidad económica?", categoria: "socioeconomica" },
+      { texto: "¿Has dejado de acudir al médico o comprar medicinas necesarias por no poder costearlos, poniendo en riesgo tu salud?", categoria: "socioeconomica" },
+      { texto: "¿Has quedado sin acceso a internet, computadora o smartphone en momentos clave por limitaciones económicas?", categoria: "socioeconomica" },
+      { texto: "¿Te han ignorado tus ideas en reuniones por no tener estudios superiores o cierto estatus económico?", categoria: "socioeconomica" },
+      { texto: "¿Has sido objeto de insultos o apodos crueles que resaltan tu situación económica, haciéndote sentir humillado/a?", categoria: "socioeconomica" },
+      { texto: "¿Te has sentido inseguro/a en tu vivienda, con construcción precaria o en una zona peligrosa, sin posibilidad de mudarte?", categoria: "socioeconomica" },
+      { texto: "¿Al buscar ayuda, ¿te han culpado por no poder mantener a tu familia debido a tu situación económica?", categoria: "socioeconomica" },
+      { texto: "¿En hospitales o clínicas públicas has recibido trato frío o deshumanizado al percibir que no puedes pagar servicios privados?", categoria: "socioeconomica" },
+      { texto: "¿Te han cobrado precios más altos o condiciones desfavorables en servicios (préstamos, compras a plazos) aprovechando tu necesidad?", categoria: "socioeconomica" },
+      { texto: "En el trabajo, ¿te han asignado los trabajos más duros o peligrosos por ser el empleado con menor poder de negociación?", categoria: "socioeconomica" },
+      { texto: "¿Has sentido que te tratan de forma diferente o con lástima en espacios exclusivos por tu nivel económico?", categoria: "socioeconomica" }
     ];
 
-    var preguntasEdad = [
-        "¿Crees que la mayoría de las personas mayores de 65 años no entienden de tecnología?",
-        "¿Evitarías contratar a alguien cercano a la edad de jubilación, aunque esté capacitado, por su edad?",
-        "¿Te parece que los adolescentes son por lo general irresponsables y poco fiables?",
-        "¿Has usado frases como \"Ok, boomer\" o \"millennial típico\" para descartar la opinión de alguien por su edad?",
-        "¿Crees que a partir de cierta edad (ejemplo: 70 años) las personas ya no deben tomar decisiones importantes por sí mismas?",
-        "¿Te sientes incómodo recibiendo órdenes de alguien mucho más joven que tú en el trabajo?",
-        "¿Piensas que las personas de veintitantos años hoy son demasiado sensibles o \"de cristal\"?",
-        "¿Tiendes a creer que los conductores jóvenes son imprudentes solo por su edad?",
-        "¿Has pensado que alguien es \"demasiado viejo\" para vestir de cierta manera o escuchar cierto tipo de música?",
-        "¿Evitas invitar a personas de mucha mayor edad a ciertas actividades asumiendo que no podrán seguir el ritmo?",
-        "¿Crees que los niños pequeños no pueden tener opiniones válidas hasta que crezcan más?",
-        "¿Te molesta cuando alguien menor que tú trata de aconsejarte o enseñarte algo?",
-        "¿Asumes que una persona muy joven en un puesto alto obtuvo el trabajo por conexiones y no por mérito?",
-        "¿Crees que las personas mayores no deberían participar en ciertos deportes o actividades \"juveniles\"?",
-        "¿Te sientes avergonzado de la idea de salir a divertirte con personas mucho más jóvenes o mayores que tú?",
-        "¿Has dicho o pensado \"ya se le pasó la edad para eso\" sobre alguien que intenta algo nuevo de adulto?",
-        "¿Prefieres aprender cosas nuevas de alguien de tu edad o mayor, desconfiando si es mucho más joven?",
-        "¿Crees que los adolescentes de hoy tienen menos valores o disciplina que los de tu generación?",
-        "¿Te niegas a considerar ideas o tendencias nuevas solo porque vienen de gente muy joven?",
-        "¿Te parece normal bromear sobre la edad de alguien (llamarlo viejo o niño) aunque no lo harías sobre otras características?",
-        "¿Piensas que en ciertos campos (tecnología, moda) la gente mayor ya no puede aportar cosas innovadoras?"
+    const preguntasEdad = [
+      { texto: "¿Alguna vez te han rechazado para un empleo diciendo que eras demasiado mayor, a pesar de tu experiencia?", categoria: "edad" },
+      { texto: "¿Te han negado un trabajo o pasantía por ser demasiado joven, aun cumpliendo los requisitos?", categoria: "edad" },
+      { texto: "En tu empleo, ¿han contratado a personas más jóvenes en lugar de promoverte a ti?", categoria: "edad" },
+      { texto: "¿Te han presionado para jubilarte o dejar el trabajo antes de lo que deseas por tu edad?", categoria: "edad" },
+      { texto: "¿Has sentido que tu salario o crecimiento profesional se estanca por considerarte 'demasiado mayor'?", categoria: "edad" },
+      { texto: "En entrevistas, ¿te han hecho comentarios sobre tu edad insinuando que podría ser un problema?", categoria: "edad" },
+      { texto: "¿Te han excluido de oportunidades de formación o capacitación por tu edad?", categoria: "edad" },
+      { texto: "En la atención médica, ¿algún doctor ha minimizado tus síntomas diciendo que 'son cosas de la edad'?", categoria: "edad" },
+      { texto: "¿Has tenido dificultades para obtener un seguro médico o de vida a un precio razonable por tu edad?", categoria: "edad" },
+      { texto: "¿Te han tratado con condescendencia por ser mayor, asumiendo que no entiendes tecnología o temas modernos?", categoria: "edad" },
+      { texto: "Si eres joven, ¿te han excluido de decisiones importantes por considerarte 'inmaduro'?", categoria: "edad" },
+      { texto: "¿Te han dificultado alquilar una vivienda por ser muy joven, debido a la desconfianza de algunos propietarios?", categoria: "edad" },
+      { texto: "¿Te has sentido fuera de lugar o rechazado/a en actividades sociales por tu edad?", categoria: "edad" },
+      { texto: "¿Te han impedido acceder a un crédito o financiamiento por ser menor de cierta edad, aun teniendo solvencia?", categoria: "edad" },
+      { texto: "¿Has sentido que los medios o la cultura popular te invisibilizan por tu edad?", categoria: "edad" },
+      { texto: "¿Te han negado participar en un proyecto o evento por exceder el rango de edad establecido, aun estando capacitado/a?", categoria: "edad" },
+      { texto: "Si eres mayor, ¿te han dificultado alquilar ciertos servicios (como coche o tours) por suposiciones sobre tu capacidad?", categoria: "edad" },
+      { texto: "¿Has recibido trato impaciente en establecimientos simplemente por pertenecer a una generación distinta?", categoria: "edad" },
+      { texto: "¿Has sido objeto de bromas o comentarios que ridiculizan a tu generación, haciéndote sentir menospreciado/a?", categoria: "edad" },
+      { texto: "¿Te han expulsado de algún sitio público (como centros comerciales) por ser muy joven debido a normas restrictivas?", categoria: "edad" },
+      { texto: "¿Alguna vez te han llamado 'boomer' o 'millennial' de forma peyorativa, haciendo que te sientas juzgado/a por tu edad?", categoria: "edad" }
     ];
 
-    // Combinar todas las preguntas en una lista con su categoría
-    var todasPreguntas = [];
-    preguntasRacial.forEach(function(p) { todasPreguntas.push({texto: p, categoria: "racial"}); });
-    preguntasGenero.forEach(function(p) { todasPreguntas.push({texto: p, categoria: "genero"}); });
-    preguntasReligiosa.forEach(function(p) { todasPreguntas.push({texto: p, categoria: "religiosa"}); });
-    preguntasCapacitista.forEach(function(p) { todasPreguntas.push({texto: p, categoria: "capacitista"}); });
-    preguntasCultural.forEach(function(p) { todasPreguntas.push({texto: p, categoria: "cultural"}); });
-    preguntasSocioeconomica.forEach(function(p) { todasPreguntas.push({texto: p, categoria: "socioeconomica"}); });
-    preguntasEdad.forEach(function(p) { todasPreguntas.push({texto: p, categoria: "edad"}); });
-    // Mezclar las preguntas aleatoriamente (Fisher-Yates)
-    for (var i = todasPreguntas.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        var temp = todasPreguntas[i];
-        todasPreguntas[i] = todasPreguntas[j];
-        todasPreguntas[j] = temp;
+    /********** FUNCIÓN PARA SELECCIONAR PREGUNTAS SEGÚN CONFIGURACIÓN **********/
+    function obtenerPreguntasDeCategoria(preguntasArray, limite) {
+      let copia = preguntasArray.slice();
+      if (limite && limite < copia.length) {
+        for (let i = copia.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copia[i], copia[j]] = [copia[j], copia[i]];
+        }
+        return copia.slice(0, limite);
+      }
+      return copia;
     }
 
-    // Insertar las preguntas en el DOM
-    var questionList = document.getElementById("questionList");
-    todasPreguntas.forEach(function(qObj, index) {
-        // Crear elementos de lista con texto y opciones de sí/no
-        var li = document.createElement("li");
-        var spanText = document.createElement("span");
-        spanText.className = "question-text";
-        spanText.textContent = qObj.texto;
-        var answersSpan = document.createElement("span");
-        answersSpan.className = "answers";
-        // Crear inputs radio Sí y No con labels
-        var yesId = "q" + index + "yes";
-        var noId = "q" + index + "no";
-        var inputYes = document.createElement("input");
-        inputYes.type = "radio";
-        inputYes.id = yesId;
-        inputYes.name = "q" + index;
-        inputYes.value = "yes";
-        var labelYes = document.createElement("label");
-        labelYes.htmlFor = yesId;
-        labelYes.textContent = "Sí";
-        var inputNo = document.createElement("input");
-        inputNo.type = "radio";
-        inputNo.id = noId;
-        inputNo.name = "q" + index;
-        inputNo.value = "no";
-        var labelNo = document.createElement("label");
-        labelNo.htmlFor = noId;
-        labelNo.textContent = "No";
-        // Añadir elementos a la lista
-        answersSpan.appendChild(inputYes);
-        answersSpan.appendChild(labelYes);
-        answersSpan.appendChild(inputNo);
-        answersSpan.appendChild(labelNo);
-        li.appendChild(spanText);
-        li.appendChild(answersSpan);
-        // Guardar categoría como atributo (para uso futuro si se quiere)
-        li.setAttribute("data-categoria", qObj.categoria);
-        questionList.appendChild(li);
+    /********** COMBINAR TODAS LAS PREGUNTAS **********/
+    let todasPreguntas = [];
+    todasPreguntas = todasPreguntas.concat(obtenerPreguntasDeCategoria(preguntasRacial, questionsLimit.racial));
+    todasPreguntas = todasPreguntas.concat(obtenerPreguntasDeCategoria(preguntasGenero, questionsLimit.genero));
+    todasPreguntas = todasPreguntas.concat(obtenerPreguntasDeCategoria(preguntasReligiosa, questionsLimit.religiosa));
+    todasPreguntas = todasPreguntas.concat(obtenerPreguntasDeCategoria(preguntasCapacitista, questionsLimit.capacitista));
+    todasPreguntas = todasPreguntas.concat(obtenerPreguntasDeCategoria(preguntasCultural, questionsLimit.cultural));
+    todasPreguntas = todasPreguntas.concat(obtenerPreguntasDeCategoria(preguntasSocioeconomica, questionsLimit.socioeconomica));
+    todasPreguntas = todasPreguntas.concat(obtenerPreguntasDeCategoria(preguntasEdad, questionsLimit.edad));
+    // Mezclar todas las preguntas
+    for (let i = todasPreguntas.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [todasPreguntas[i], todasPreguntas[j]] = [todasPreguntas[j], todasPreguntas[i]];
+    }
+
+    /********** INSERTAR PREGUNTAS EN EL DOM **********/
+    const questionList = document.getElementById("questionList");
+    todasPreguntas.forEach((qObj, index) => {
+      const li = document.createElement("li");
+      const spanText = document.createElement("span");
+      spanText.className = "question-text";
+      spanText.textContent = qObj.texto;
+      
+      const answersDiv = document.createElement("div");
+      answersDiv.className = "answers";
+      
+      const yesId = "q" + index + "yes";
+      const noId  = "q" + index + "no";
+      
+      const inputYes = document.createElement("input");
+      inputYes.type = "radio";
+      inputYes.id = yesId;
+      inputYes.name = "q" + index;
+      inputYes.value = "yes";
+      
+      const labelYes = document.createElement("label");
+      labelYes.htmlFor = yesId;
+      labelYes.textContent = "Sí";
+      
+      const inputNo = document.createElement("input");
+      inputNo.type = "radio";
+      inputNo.id = noId;
+      inputNo.name = "q" + index;
+      inputNo.value = "no";
+      
+      const labelNo = document.createElement("label");
+      labelNo.htmlFor = noId;
+      labelNo.textContent = "No";
+      
+      answersDiv.appendChild(inputYes);
+      answersDiv.appendChild(labelYes);
+      answersDiv.appendChild(inputNo);
+      answersDiv.appendChild(labelNo);
+      
+      li.appendChild(spanText);
+      li.appendChild(answersDiv);
+      li.setAttribute("data-categoria", qObj.categoria);
+      questionList.appendChild(li);
     });
 
-    // Lógica del personaje aleatorio
-    var charIndex = Math.floor(Math.random() * 10);
-    var characterEl = document.getElementById("character");
-    var charStoryEl = document.getElementById("charStory");
-    // Definir características de cada personaje (colores, accesorios, historia)
-    var personajes = [
-        {
-            skin: "#FCD7B8", hair: "#8B4513", bodyColor: "#8BC34A",
-            extra1: {type: "hair", width: "60px", height: "30px", top: "-5px", background: "#8B4513", borderRadius: "50%"},
-            extra2: null,
-            mouthStyle: "smile",
-            story: "¡Hola! Soy Ana, me encanta aprender idiomas y defender la igualdad."
-        },
-        {
-            skin: "#8D5524", hair: null, bodyColor: "#FF9800",
-            extra1: null, extra2: null,
-            mouthStyle: "neutral",
-            story: "Soy Beto. Soy muy curioso y siempre hago preguntas para entender a los demás."
-        },
-        {
-            skin: "#C68642", hair: "#BBB", bodyColor: "#03A9F4",
-            extra1: {type: "hair", width: "60px", height: "20px", top: "0px", background: "#BBB", borderRadius: "0 0 50% 50%"},
-            extra2: null,
-            mouthStyle: "smile",
-            story: "Me llamo Carlos. Soy un profesor jubilado al que le encanta la tecnología."
-        },
-        {
-            skin: "#F1C27D", hair: "#367C94", bodyColor: "#FFC107",
-            extra1: {type: "hair", width: "70px", height: "70px", top: "-5px", background: "#367C94", borderRadius: "50%"},
-            extra2: null,
-            mouthStyle: "neutral",
-            story: "Soy Dalia. Llevo mi pañuelo con orgullo y estudio ingeniería."
-        },
-        {
-            skin: "#FFDBAC", hair: "#000", bodyColor: "#9C27B0",
-            extra1: {type: "hat", width: "50px", height: "20px", top: "-10px", background: "#000", borderRadius: "5px"},
-            extra2: null,
-            mouthStyle: "smile",
-            story: "¡Hey! Soy Ema. Siempre llevo mi gorra de la suerte a todos lados."
-        },
-        {
-            skin: "#FFD1DC", hair: "#E91E63", bodyColor: "#00BCD4",
-            extra1: {type: "hair", width: "60px", height: "30px", top: "-5px", background: "#E91E63", borderRadius: "50%"},
-            extra2: null,
-            mouthStyle: "smile",
-            story: "Soy Flor. Mi cabello rosa refleja mi personalidad alegre y creativa."
-        },
-        {
-            skin: "#FFE0BD", hair: null, bodyColor: "#FF5722",
-            extra1: {type: "glasses", leftEyeX: 14, rightEyeX: 40, top: "18px"},
-            extra2: null,
-            mouthStyle: "smile",
-            story: "Hola, soy Guille. Siempre tengo mis gafas listas para leer un buen libro."
-        },
-        {
-            skin: "#F1C27D", hair: "#000", bodyColor: "#4CAF50",
-            extra1: {type: "hair", width: "50px", height: "50px", top: "0px", background: "#000", borderRadius: "50%"},
-            extra2: null,
-            mouthStyle: "neutral",
-            story: "Me llamo Hiro. Soy programador y a veces puedo ser tímido, ¡pero me encanta hacer amigos!"
-        },
-        {
-            skin: "#8D5524", hair: "#FFEB3B", bodyColor: "#795548",
-            extra1: {type: "hair", width: "0", height: "0", borderLeft: "15px solid transparent", borderRight: "15px solid transparent", borderBottom: "30px solid #FFEB3B", top: "-15px", left: "50%", marginLeft: "-15px"},
-            extra2: null,
-            mouthStyle: "smile",
-            story: "Soy Iris. Aunque uso silla de ruedas, ¡nada me detiene en las carreras!"
-        },
-        {
-            skin: "#C68642", hair: "#2F4F4F", bodyColor: "#FF5722",
-            extra1: {type: "hair", width: "60px", height: "40px", top: "-10px", background: "#2F4F4F", borderRadius: "50%"},
-            extra2: null,
-            mouthStyle: "frown",
-            story: "Hola, soy José. Tengo un estilo punk y me gusta cuestionar todo."
-        }
+    /********** PERSONAJE ALEATORIO **********/
+    // Se ha actualizado cada objeto para incluir "nombre"
+    const personajes = [
+      {
+        nombre: "Ana",
+        skin: "#FCD7B8", bodyColor: "#8BC34A",
+        extra1: { type: "hair", width: "60px", height: "30px", top: "-5px", background: "#8B4513", borderRadius: "50%" },
+        mouthStyle: "smile",
+        story: "¡Hola! Soy Ana, defensora de la igualdad y el acceso a la cultura."
+      },
+      {
+        nombre: "Beto",
+        skin: "#8D5524", bodyColor: "#FF9800",
+        extra1: null,
+        mouthStyle: "neutral",
+        story: "Soy Beto. Curioso y persistente, siempre en búsqueda de justicia en el trabajo."
+      },
+      {
+        nombre: "Carlos",
+        skin: "#C68642", bodyColor: "#03A9F4",
+        extra1: { type: "hair", width: "60px", height: "20px", top: "0px", background: "#BBB", borderRadius: "0 0 50% 50%" },
+        mouthStyle: "smile",
+        story: "Me llamo Carlos, profesor jubilado y defensor del derecho a una vida digna."
+      },
+      {
+        nombre: "Dalia",
+        skin: "#F1C27D", bodyColor: "#FFC107",
+        extra1: { type: "hair", width: "70px", height: "70px", top: "-5px", background: "#367C94", borderRadius: "50%" },
+        mouthStyle: "neutral",
+        story: "Soy Dalia, ingeniera y lucho por que se respeten las costumbres y creencias de todos."
+      },
+      {
+        nombre: "Ema",
+        skin: "#FFDBAC", bodyColor: "#9C27B0",
+        extra1: { type: "hat", width: "50px", height: "20px", top: "-10px", background: "#000", borderRadius: "5px" },
+        mouthStyle: "smile",
+        story: "¡Hey! Soy Ema, siempre con mi gorra de la suerte, comprometida con la justicia social."
+      },
+      {
+        nombre: "Flor",
+        skin: "#FFD1DC", bodyColor: "#00BCD4",
+        extra1: { type: "hair", width: "60px", height: "30px", top: "-5px", background: "#E91E63", borderRadius: "50%" },
+        mouthStyle: "smile",
+        story: "Soy Flor, mi cabello rosa refleja mi lucha por la igualdad en salud y educación."
+      },
+      {
+        nombre: "Guille",
+        skin: "#FFE0BD", bodyColor: "#FF5722",
+        extra1: { type: "glasses", top: "18px" },
+        mouthStyle: "smile",
+        story: "Hola, soy Guille. Con mis gafas siempre listas, defiendo el derecho a la información."
+      },
+      {
+        nombre: "Hiro",
+        skin: "#F1C27D", bodyColor: "#4CAF50",
+        extra1: { type: "hair", width: "50px", height: "50px", top: "0px", background: "#000", borderRadius: "50%" },
+        mouthStyle: "neutral",
+        story: "Me llamo Hiro, programador y amante de la tecnología, lucho por un acceso digital justo."
+      },
+      {
+        nombre: "Iris",
+        skin: "#8D5524", bodyColor: "#795548",
+        extra1: { type: "hair", width: "0", height: "0", borderLeft: "15px solid transparent", borderRight: "15px solid transparent", borderBottom: "30px solid #FFEB3B", top: "-15px", left: "50%", marginLeft: "-15px" },
+        mouthStyle: "smile",
+        story: "Soy Iris. Con mi silla de ruedas, demuestro que la movilidad es un derecho para todos."
+      },
+      {
+        nombre: "José",
+        skin: "#C68642", bodyColor: "#FF5722",
+        extra1: { type: "hair", width: "60px", height: "40px", top: "-10px", background: "#2F4F4F", borderRadius: "50%" },
+        mouthStyle: "frown",
+        story: "Hola, soy José, con mi estilo punk cuestiono todo y lucho por la inclusión en todos los ámbitos."
+      }
     ];
-    // Aplicar propiedades del personaje seleccionado
-    var personaje = personajes[charIndex];
-    // piel
+    const charIndex = Math.floor(Math.random() * personajes.length);
+    const personaje = personajes[charIndex];
+    const characterEl = document.getElementById("character");
     characterEl.querySelector('.head').style.backgroundColor = personaje.skin;
-    // cabello o accesorio extra1
-    var extra1El = characterEl.querySelector('.extra1');
-    if (personaje.extra1) {
-        extra1El.style.display = "block";
-        if (personaje.extra1.type === "hair") {
-            extra1El.style.width = personaje.extra1.width;
-            extra1El.style.height = personaje.extra1.height;
-            extra1El.style.top = personaje.extra1.top;
-            extra1El.style.left = "50%";
-            extra1El.style.transform = "translateX(-50%)";
-            extra1El.style.backgroundColor = personaje.extra1.background;
-            extra1El.style.borderRadius = personaje.extra1.borderRadius;
-            extra1El.style.zIndex = "0";
-        } else if (personaje.extra1.type === "hat") {
-            extra1El.style.width = personaje.extra1.width;
-            extra1El.style.height = personaje.extra1.height;
-            extra1El.style.top = personaje.extra1.top;
-            extra1El.style.left = "50%";
-            extra1El.style.transform = "translateX(-50%)";
-            extra1El.style.backgroundColor = personaje.extra1.background;
-            extra1El.style.borderRadius = personaje.extra1.borderRadius;
-            extra1El.style.zIndex = "2";
-        } else if (personaje.extra1.type === "glasses") {
-            // crear lentes alrededor de los ojos
-            extra1El.style.width = "0";
-            extra1El.style.height = "0";
-            // Dibujar lentes con borde: usaremos pseudo-elementos quizá, pero por simplicidad dibujaremos dos círculos con CSS via JS
-            // Crear dos elementos para lentes
-            extra1El.innerHTML = "<span class='glasses-lens'></span><span class='glasses-lens'></span>";
-            var lensElems = extra1El.querySelectorAll('.glasses-lens');
-            lensElems.forEach(function(lens, idx) {
-                lens.style.position = "absolute";
-                lens.style.width = "14px";
-                lens.style.height = "14px";
-                lens.style.border = "2px solid #000";
-                lens.style.borderRadius = "50%";
-                lens.style.top = personaje.extra1.top;
-                lens.style.backgroundColor = "transparent";
-                if (idx === 0) {
-                    lens.style.left = "14px";
-                } else {
-                    lens.style.right = "14px";
-                }
-            });
-        }
-    } else {
-        extra1El.style.display = "none";
-    }
-    // extra2 (si lo hubiera)
-    var extra2El = characterEl.querySelector('.extra2');
-    if (personaje.extra2) {
-        extra2El.style.display = "block";
-        // (Ninguno de nuestros personajes usa extra2 en este ejemplo)
-    } else {
-        extra2El.style.display = "none";
-    }
-    // color de ropa (body)
     characterEl.querySelector('.body').style.backgroundColor = personaje.bodyColor;
-    // estilo de boca
-    var mouthEl = characterEl.querySelector('.mouth');
-    if (personaje.mouthStyle === "smile") {
-        mouthEl.style.width = "12px";
-        mouthEl.style.height = "6px";
-        mouthEl.style.backgroundColor = "#000";
-        mouthEl.style.borderRadius = "0 0 6px 6px";
-        mouthEl.style.border = "none";
-        mouthEl.style.top = "35px";
-    } else if (personaje.mouthStyle === "frown") {
-        mouthEl.style.width = "12px";
-        mouthEl.style.height = "6px";
-        mouthEl.style.backgroundColor = "#000";
-        mouthEl.style.borderRadius = "6px 6px 0 0";
-        mouthEl.style.border = "none";
-        mouthEl.style.top = "38px";
-    } else if (personaje.mouthStyle === "neutral") {
-        mouthEl.style.width = "8px";
-        mouthEl.style.height = "2px";
-        mouthEl.style.backgroundColor = "#000";
-        mouthEl.style.borderRadius = "1px";
-        mouthEl.style.border = "none";
-        mouthEl.style.top = "38px";
-    }
-
-    // Mostrar historia al hacer clic en el personaje
-    charStoryEl.textContent = personaje.story;
-    characterEl.addEventListener('click', function() {
-        if (charStoryEl.style.display === "none" || charStoryEl.style.display === "") {
-            charStoryEl.style.display = "block";
-        } else {
-            charStoryEl.style.display = "none";
-        }
-    });
-
-    // Manejar clic en Ver Resultados
-    var submitBtn = document.getElementById("submitBtn");
-    var resultChartEl = document.getElementById("resultChart");
-    var screenshotMsgEl = document.getElementById("screenshotMsg");
-    var radarChart; // para almacenar instancia del gráfico
-    submitBtn.addEventListener('click', function() {
-        // Validar que todas las preguntas tengan respuesta
-        var totalPreguntas = todasPreguntas.length;
-        var respondidas = document.querySelectorAll('input[type="radio"]:checked').length;
-        if (respondidas < totalPreguntas) {
-            alert("Por favor, responde a todas las preguntas antes de ver los resultados.");
-            return;
-        }
-        // Calcular resultados por categoría
-        var resultados = {
-            racial: 0,
-            genero: 0,
-            religiosa: 0,
-            capacitista: 0,
-            cultural: 0,
-            socioeconomica: 0,
-            edad: 0
-        };
-        todasPreguntas.forEach(function(qObj, idx) {
-            var seleccion = document.querySelector('input[name="q' + idx + '"]:checked').value;
-            if (seleccion === "yes") {
-                resultados[qObj.categoria] += 1;
-            }
+    const extra1El = characterEl.querySelector('.extra1');
+    if (personaje.extra1) {
+      extra1El.style.display = "block";
+      if (personaje.extra1.type === "hair" || personaje.extra1.type === "hat") {
+        extra1El.style.width = personaje.extra1.width;
+        extra1El.style.height = personaje.extra1.height;
+        extra1El.style.top = personaje.extra1.top;
+        extra1El.style.left = "50%";
+        extra1El.style.transform = "translateX(-50%)";
+        extra1El.style.backgroundColor = personaje.extra1.background;
+        extra1El.style.borderRadius = personaje.extra1.borderRadius;
+      } else if (personaje.extra1.type === "glasses") {
+        extra1El.innerHTML = "<span class='glasses-lens'></span><span class='glasses-lens'></span>";
+        extra1El.querySelectorAll('.glasses-lens').forEach((lens, idx) => {
+          lens.style.position = "absolute";
+          lens.style.width = "14px";
+          lens.style.height = "14px";
+          lens.style.border = "2px solid #000";
+          lens.style.borderRadius = "50%";
+          lens.style.top = personaje.extra1.top;
+          lens.style.backgroundColor = "transparent";
+          lens.style.left = idx === 0 ? "14px" : "unset";
+          lens.style.right = idx === 1 ? "14px" : "unset";
         });
-        // Preparar datos para el gráfico
-        var etiquetas = ["Racial", "Género", "Religiosa", "Capacitista", "Cultural", "Socioeconómica", "Edad"];
-        var datos = [
-            resultados.racial,
-            resultados.genero,
-            resultados.religiosa,
-            resultados.capacitista,
-            resultados.cultural,
-            resultados.socioeconomica,
-            resultados.edad
-        ];
-        // Crear o actualizar el gráfico radar
-        if (!radarChart) {
-            var ctx = resultChartEl.getContext('2d');
-            radarChart = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: etiquetas,
-                    datasets: [{
-                        label: 'Resultados del Test',
-                        data: datos,
-                        backgroundColor: 'rgba(233,30,99,0.2)',
-                        borderColor: 'rgba(233,30,99,1)',
-                        pointBackgroundColor: 'rgba(233,30,99,1)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    aspectRatio: 1,
-                    scales: {
-                        r: {
-                            beginAtZero: true,
-                            pointLabels: { font: { size: 12, family: 'Luckiest Guy, sans-serif' } },
-                            ticks: { stepSize: 1 }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        title: {
-                            display: true,
-                            text: 'Discriminación (Sí = más sesgo en la categoría)',
-                            font: { size: 14, family: 'Luckiest Guy, sans-serif' }
-                        }
-                    }
-                }
-            });
-        } else {
-            radarChart.data.datasets[0].data = datos;
-            radarChart.update();
-        }
-        // Mostrar el gráfico y mensaje de captura
-        resultChartEl.style.display = "block";
-        // Generar instrucciones de captura según dispositivo
-        var instrucciones = "Recomendación: realiza una captura de pantalla de tus resultados.<br/>";
-        var ua = navigator.userAgent || navigator.platform;
-        if (/Windows/i.test(ua)) {
-            instrucciones += "En Windows: Presiona <b>Win + Impr Pant</b> (Print Screen) para guardar una captura, o <b>Win + Shift + S</b> para usar la herramienta de recorte.";
-        } else if (/Mac/i.test(ua)) {
-            instrucciones += "En Mac: Presiona <b>Shift + ⌘ + 3</b> para capturar la pantalla completa, o <b>Shift + ⌘ + 4</b> para capturar una parte.";
-        } else if (/Android/i.test(ua)) {
-            instrucciones += "En Android: Presiona simultáneamente <b>Volumen Abajo + Encendido</b> para hacer una captura.";
-        } else if (/iPhone|iPad|iPod/i.test(ua)) {
-            instrucciones += "En iOS: Presiona a la vez <b>Botón lateral (o superior) + Botón de inicio</b> (o <b>Volumen Arriba</b> en modelos sin botón de inicio).";
-        } else {
-            instrucciones += "En tu dispositivo, utiliza la combinación de teclas o herramienta correspondiente para tomar una captura de pantalla.";
-        }
-        screenshotMsgEl.innerHTML = instrucciones;
-        screenshotMsgEl.style.display = "block";
-        // Desplazar la vista hacia el gráfico para que el usuario lo vea
-        resultChartEl.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      extra1El.style.display = "none";
+    }
+    const mouthEl = characterEl.querySelector('.mouth');
+    if (personaje.mouthStyle === "smile") {
+      mouthEl.style.width = "12px";
+      mouthEl.style.height = "6px";
+      mouthEl.style.backgroundColor = "#000";
+      mouthEl.style.borderRadius = "0 0 6px 6px";
+      mouthEl.style.top = "35px";
+    } else if (personaje.mouthStyle === "frown") {
+      mouthEl.style.width = "12px";
+      mouthEl.style.height = "6px";
+      mouthEl.style.backgroundColor = "#000";
+      mouthEl.style.borderRadius = "6px 6px 0 0";
+      mouthEl.style.top = "38px";
+    } else if (personaje.mouthStyle === "neutral") {
+      mouthEl.style.width = "8px";
+      mouthEl.style.height = "2px";
+      mouthEl.style.backgroundColor = "#000";
+      mouthEl.style.borderRadius = "1px";
+      mouthEl.style.top = "38px";
+    }
+    const charStoryEl = document.getElementById("charStory");
+    charStoryEl.textContent = personaje.story;
+    characterEl.addEventListener("click", () => {
+      charStoryEl.style.display = (charStoryEl.style.display === "none" || !charStoryEl.style.display) ? "block" : "none";
     });
 
-    // Agregar elementos decorativos al fondo
-    var decoraciones = ['circle1', 'circle2', 'square1', 'square2', 'triangle'];
-    decoraciones.forEach(function(cls) {
-        var decoEl = document.createElement('div');
-        decoEl.className = 'deco ' + cls;
-        document.body.appendChild(decoEl);
+    /********** FONDO ALEATORIO Y DECORACIONES **********/
+    const fondos = [
+      "linear-gradient(135deg, #f3e5f5, #e1bee7)",
+      "linear-gradient(135deg, #FFCDD2, #F8BBD0)",
+      "linear-gradient(135deg, #C8E6C9, #A5D6A7)",
+      "linear-gradient(135deg, #BBDEFB, #90CAF9)",
+      "linear-gradient(135deg, #FFF9C4, #FFF59D)"
+    ];
+    const fondoSeleccionado = fondos[Math.floor(Math.random() * fondos.length)];
+    document.body.style.background = fondoSeleccionado;
+
+    /********** POPUP DE CUSTOMIZACIÓN **********/
+    const customBtn = document.getElementById("customBtn");
+    const customModal = document.getElementById("customModal");
+    const closeModal = document.querySelector(".modal .close");
+    customBtn.addEventListener("click", () => {
+      // Llenar datos en el modal
+      document.getElementById("currentFondo").textContent = fondoSeleccionado;
+      const fondoList = document.getElementById("fondoList");
+      fondoList.innerHTML = "";
+      fondos.forEach(f => {
+        const li = document.createElement("li");
+        li.textContent = f;
+        fondoList.appendChild(li);
+      });
+      const limitList = document.getElementById("limitList");
+      limitList.innerHTML = "";
+      for (const key in questionsLimit) {
+        const li = document.createElement("li");
+        li.textContent = key + ": " + (questionsLimit[key] === null ? "Todas" : questionsLimit[key]);
+        limitList.appendChild(li);
+      }
+      customModal.style.display = "block";
     });
-    </script>
+    closeModal.addEventListener("click", () => {
+      customModal.style.display = "none";
+    });
+    window.addEventListener("click", (event) => {
+      if (event.target == customModal) {
+        customModal.style.display = "none";
+      }
+    });
+
+    /********** BOTÓN DE RESULTADOS Y GRÁFICO **********/
+    const submitBtn = document.getElementById("submitBtn");
+    const resultChartEl = document.getElementById("resultChart");
+    const screenshotMsgEl = document.getElementById("screenshotMsg");
+    const resultExplanationEl = document.getElementById("resultExplanation");
+    const finalMsgEl = document.getElementById("finalMsg");
+    let radarChart;
+
+    submitBtn.addEventListener("click", () => {
+      // Contabilizar respuestas "Sí" (si no se respondió, se asume "no")
+      const resultados = {
+        racial: 0,
+        genero: 0,
+        religiosa: 0,
+        capacitista: 0,
+        cultural: 0,
+        socioeconomica: 0,
+        edad: 0
+      };
+      todasPreguntas.forEach((qObj, idx) => {
+        const resp = document.querySelector('input[name="q' + idx + '"]:checked');
+        if (resp && resp.value === "yes") {
+          resultados[qObj.categoria]++;
+        }
+      });
+      // Datos para el gráfico radar
+      const etiquetas = ["Racial", "Género/Orientación", "Religiosa", "Capacitista", "Cultural", "Socioeconómica", "Edad"];
+      const datos = [
+        resultados.racial,
+        resultados.genero,
+        resultados.religiosa,
+        resultados.capacitista,
+        resultados.cultural,
+        resultados.socioeconomica,
+        resultados.edad
+      ];
+      if (!radarChart) {
+        const ctx = resultChartEl.getContext("2d");
+        radarChart = new Chart(ctx, {
+          type: 'radar',
+          data: {
+            labels: etiquetas,
+            datasets: [{
+              label: 'Experiencias vividas',
+              data: datos,
+              backgroundColor: 'rgba(233,30,99,0.2)',
+              borderColor: 'rgba(233,30,99,1)',
+              pointBackgroundColor: 'rgba(233,30,99,1)',
+              borderWidth: 2
+            }]
+          },
+          options: {
+            scales: {
+              r: {
+                beginAtZero: true,
+                ticks: { stepSize: 1 },
+                pointLabels: { font: { size: 12, family: 'Comic Neue, sans-serif' } }
+              }
+            },
+            plugins: {
+              legend: { display: false },
+              title: {
+                display: true,
+                text: 'Impacto de las experiencias discriminatorias (más Sí = mayor impacto)',
+                font: { size: 14, family: 'Luckiest Guy, cursive' }
+              }
+            },
+            responsive: true,
+            maintainAspectRatio: true
+          }
+        });
+      } else {
+        radarChart.data.datasets[0].data = datos;
+        radarChart.update();
+      }
+      resultChartEl.style.display = "block";
+
+      // Generar instrucciones para screenshot según dispositivo
+      let instrucciones = "Recomendación: realiza una captura de pantalla de tus resultados.<br/>";
+      const ua = navigator.userAgent || navigator.platform;
+      if (/Windows/i.test(ua)) {
+        instrucciones += "En Windows: Presiona <b>Win + Impr Pant</b> o <b>Win + Shift + S</b>.";
+      } else if (/Mac/i.test(ua)) {
+        instrucciones += "En Mac: Presiona <b>Shift + ⌘ + 3</b> para la pantalla completa o <b>Shift + ⌘ + 4</b> para una parte.";
+      } else if (/Android/i.test(ua)) {
+        instrucciones += "En Android: Presiona <b>Volumen Abajo + Encendido</b> para capturar.";
+      } else if (/iPhone|iPad|iPod/i.test(ua)) {
+        instrucciones += "En iOS: Usa <b>Botón lateral + Botón de inicio</b> o <b>Botón lateral + Volumen Arriba</b> (según modelo).";
+      } else {
+        instrucciones += "Utiliza la combinación de teclas o herramienta correspondiente en tu dispositivo.";
+      }
+      screenshotMsgEl.innerHTML = instrucciones;
+      screenshotMsgEl.style.display = "block";
+
+      // Generar una pequeña explicación basada en los resultados
+      let totalYes = datos.reduce((a, b) => a + b, 0);
+      let explanation = "";
+      if (totalYes === 0) {
+        explanation = "Tus respuestas indican que, en general, no has enfrentado barreras discriminatorias en estos ámbitos. ¡Felicidades!";
+      } else {
+        // Encontrar la categoría con mayor "Sí"
+        let maxVal = Math.max(...datos);
+        let maxIndex = datos.indexOf(maxVal);
+        let categoriaMax = etiquetas[maxIndex];
+        explanation = "Tus respuestas muestran que has experimentado mayores dificultades en el área de <strong>" + categoriaMax + "</strong> (" + maxVal + " afirmativas). Revisa el gráfico para más detalles.";
+      }
+      resultExplanationEl.innerHTML = explanation;
+      resultExplanationEl.style.display = "block";
+
+      // Mensaje final
+      finalMsgEl.textContent = "Test realizado con la supervisión de Dr. Igualdad y el personaje " + personaje.nombre + ".";
+      finalMsgEl.style.display = "block";
+
+      resultChartEl.scrollIntoView({ behavior: "smooth" });
+    });
+
+    /********** ELEMENTOS DECORATIVOS **********/
+    const decoraciones = [
+      { type: "circle", size: 50, color: "#FF9800", top: 20, left: 20 },
+      { type: "circle", size: 30, color: "#009688", top: 250, right: 20 },
+      { type: "square", size: 40, color: "#9C27B0", top: 100, left: "5%" },
+      { type: "square", size: 20, color: "#FFC107", bottom: 100, right: "10%" },
+      { type: "triangle", size: 35, color: "#03A9F4", top: "60%", left: "10%" }
+    ];
+    decoraciones.forEach(deco => {
+      const decoEl = document.createElement("div");
+      decoEl.className = "deco";
+      if (deco.type === "circle") {
+        decoEl.classList.add("circle");
+        decoEl.style.width = deco.size + "px";
+        decoEl.style.height = deco.size + "px";
+        decoEl.style.background = deco.color;
+      } else if (deco.type === "square") {
+        decoEl.style.width = deco.size + "px";
+        decoEl.style.height = deco.size + "px";
+        decoEl.style.background = deco.color;
+        decoEl.style.transform = "rotate(45deg)";
+      } else if (deco.type === "triangle") {
+        decoEl.style.width = "0";
+        decoEl.style.height = "0";
+        decoEl.style.borderLeft = (deco.size/2) + "px solid transparent";
+        decoEl.style.borderRight = (deco.size/2) + "px solid transparent";
+        decoEl.style.borderBottom = deco.size + "px solid " + deco.color;
+      }
+      if (deco.top) { decoEl.style.top = typeof deco.top === "number" ? deco.top + "px" : deco.top; }
+      if (deco.left) { decoEl.style.left = typeof deco.left === "number" ? deco.left + "px" : deco.left; }
+      if (deco.right) { decoEl.style.right = typeof deco.right === "number" ? deco.right + "px" : deco.right; }
+      if (deco.bottom) { decoEl.style.bottom = typeof deco.bottom === "number" ? deco.bottom + "px" : deco.bottom; }
+      document.body.appendChild(decoEl);
+    });
+  </script>
 </body>
 </html>
