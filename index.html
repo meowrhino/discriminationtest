@@ -1,398 +1,764 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Test de Discriminaciones Especulativo</title>
-  <!-- Fuentes de Google: Montserrat para encabezados y Roboto para cuerpo -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-color: #1a1a1a;
-      --text-color: #e0e0e0;
-      --accent: #7f5af0;
-      --secondary: #2cb67d;
-      --primary-font: 'Roboto', sans-serif;
-      --heading-font: 'Montserrat', sans-serif;
-    }
-    
-    body {
-      font-family: var(--primary-font);
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      margin: 0;
-      padding: 20px;
-      transition: all 0.3s;
-    }
-    
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-    
-    .theme-toggle {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      cursor: pointer;
-      padding: 10px 15px;
-      border-radius: 50%;
-      background: var(--accent);
-      color: var(--bg-color);
-      font-weight: bold;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      transition: transform 0.2s;
-    }
-    
-    .theme-toggle:hover {
-      transform: scale(1.1);
-    }
-    
-    h1, h2 {
-      font-family: var(--heading-font);
-    }
-    
-    .category {
-      background: #2d2d2d;
-      border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-      animation: fadeIn 1s ease-in;
-    }
-    
-    .question {
-      margin: 15px 0;
-      padding: 10px;
-      background: #363636;
-      border-radius: 5px;
-      transition: background 0.3s;
-    }
-    
-    .question:hover {
-      background: #414141;
-    }
-    
-    label {
-      cursor: pointer;
-    }
-    
-    input[type="checkbox"] {
-      margin-right: 10px;
-      transform: scale(1.2);
-      cursor: pointer;
-    }
-    
-    button {
-      background: linear-gradient(45deg, var(--accent), var(--secondary));
-      color: white;
-      border: none;
-      padding: 15px 30px;
-      border-radius: 25px;
-      cursor: pointer;
-      font-size: 1.1em;
-      display: block;
-      margin: 20px auto;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    
-    button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-    }
-    
-    .results {
-      background: #252525;
-      padding: 20px;
-      border-radius: 10px;
-      margin-top: 30px;
-      animation: fadeIn 1s ease-in;
-    }
-    
-    .progress-bar {
-      background: #333;
-      border-radius: 5px;
-      overflow: hidden;
-      margin-bottom: 15px;
-    }
-    
-    .progress-bar-inner {
-      height: 10px;
-      background: var(--accent);
-      transition: width 0.5s;
-    }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    /* Modo claro */
-    body.light-theme {
-      --bg-color: #f8f9fa;
-      --text-color: #1a1a1a;
-      --accent: #6c5ce7;
-      --secondary: #00b894;
-    }
-    
-    body.light-theme .category,
-    body.light-theme .question,
-    body.light-theme .results {
-      background: #ffffff;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    
-    body.light-theme .theme-toggle {
-      background: var(--accent);
-      color: var(--bg-color);
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test de Prejuicios</title>
+    <!-- Fuente Luckiest Guy de Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet" />
+    <style>
+        /* Estilos base */
+        body {
+            background-color: #FFF8E5; /* color de fondo claro y cálido */
+            color: #333;
+            font-family: 'Luckiest Guy', cursive, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin: 10px 0 5px;
+            color: #FF4081; /* un color vibrante para el título */
+        }
+        p.intro {
+            text-align: center;
+            font-size: 1.1em;
+            margin: 5px 0 20px;
+            color: #555;
+            line-height: 1.4;
+            font-family: 'Luckiest Guy', cursive, sans-serif;
+        }
+        /* Personaje */
+        #character {
+            position: relative;
+            width: 100px;
+            height: 140px;
+            margin: 0 auto 10px;
+            cursor: pointer;
+        }
+        /* Elementos del personaje */
+        #character .head {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #FCD7B8; /* tono piel claro por defecto, se cambiará por personaje */
+            margin: 0 auto;
+            z-index: 1;
+        }
+        #character .eye {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #000;
+            border-radius: 50%;
+            top: 18px;
+        }
+        #character .eye-left { left: 18px; }
+        #character .eye-right { right: 18px; }
+        #character .mouth {
+            position: absolute;
+            width: 12px;
+            height: 6px;
+            top: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #000;
+            border-radius: 0 0 6px 6px; /* forma de media luna (sonrisa) por defecto */
+        }
+        #character .body {
+            position: absolute;
+            top: 55px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 50px;
+            background: #8BC34A; /* color de camiseta por defecto */
+            border-radius: 15px;
+        }
+        #character .feature {
+            position: absolute;
+        }
+        /* Historieta/personality del personaje */
+        #charStory {
+            max-width: 300px;
+            margin: 0 auto 20px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #333;
+            display: none;
+        }
+        /* Preguntas */
+        #questions-container {
+            max-width: 800px;
+            margin: 0 auto;
+            column-count: 2;  /* mostrar en 2 columnas en pantallas grandes */
+            column-gap: 40px;
+        }
+        @media (max-width: 600px) {
+            #questions-container {
+                column-count: 1; /* en pantallas pequeñas, 1 columna */
+            }
+        }
+        ul.question-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        ul.question-list li {
+            margin-bottom: 15px;
+        }
+        .question-text {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.95em;
+            line-height: 1.3;
+            color: #222;
+        }
+        .answers label {
+            display: inline-block;
+            padding: 5px 12px;
+            margin-right: 10px;
+            border: 2px solid;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            user-select: none;
+            transition: all 0.2s;
+        }
+        .answers label:hover {
+            transform: translateY(-2px);
+        }
+        /* Colores para Sí (orange) y No (teal) */
+        .answers label[for$="yes"] {
+            border-color: #FF9800;
+            color: #FF9800;
+        }
+        .answers label[for$="no"] {
+            border-color: #009688;
+            color: #009688;
+        }
+        /* Ocultar inputs de radio */
+        .answers input[type="radio"] {
+            display: none;
+        }
+        /* Estilos cuando está seleccionado */
+        .answers input[type="radio"]:checked + label {
+            color: #fff;
+        }
+        #questions-container input[type="radio"]:checked + label[for$="yes"] {
+            background-color: #FF9800;
+        }
+        #questions-container input[type="radio"]:checked + label[for$="no"] {
+            background-color: #009688;
+        }
+        /* Botón de resultados */
+        #submitBtn {
+            background-color: #FF4081;
+            color: #fff;
+            font-family: 'Luckiest Guy', cursive, sans-serif;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            transition: background-color 0.2s;
+        }
+        #submitBtn:hover {
+            background-color: #E91E63;
+        }
+        /* Canvas del gráfico */
+        #chartContainer {
+            width: 90%;
+            max-width: 500px;
+            margin: 30px auto;
+            text-align: center;
+        }
+        #resultChart {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            display: none; /* oculto inicialmente */
+        }
+        /* Mensaje de captura de pantalla */
+        #screenshotMsg {
+            max-width: 500px;
+            margin: 15px auto;
+            font-size: 0.9em;
+            text-align: center;
+            color: #555;
+            display: none;
+            line-height: 1.4;
+        }
+        /* Elementos decorativos (formas de colores) */
+        .deco {
+            position: absolute;
+            opacity: 0.3;
+        }
+        .deco.circle1 {
+            width: 50px; height: 50px; background: #FF9800; border-radius: 50%; top: 20px; left: 20px;
+        }
+        .deco.circle2 {
+            width: 30px; height: 30px; background: #009688; border-radius: 50%; top: 250px; right: 20px;
+        }
+        .deco.square1 {
+            width: 40px; height: 40px; background: #9C27B0; transform: rotate(45deg); top: 100px; left: 5%;
+        }
+        .deco.square2 {
+            width: 20px; height: 20px; background: #FFC107; transform: rotate(45deg); bottom: 100px; right: 10%;
+        }
+        .deco.triangle {
+            width: 0; height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 35px solid #03A9F4;
+            top: 60%; left: 10%;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="theme-toggle" onclick="toggleTheme()">🌓</div>
-    <h1>Test de Discriminaciones Especulativo</h1>
-    <div id="questions-container"></div>
-    <button onclick="calculateResults()">Calcular resultados</button>
-    <div class="results" id="results"></div>
-  </div>
+    <h1>Test de Prejuicios</h1>
+    <p class="intro">Responde <strong>Sí</strong> o <strong>No</strong> a todas las preguntas abajo. <br/>
+    Al terminar, haz clic en <em>Ver Resultados</em> para ver tu perfil.</p>
+    <!-- Personaje -->
+    <div id="character">
+        <div class="head"></div>
+        <div class="eye eye-left"></div>
+        <div class="eye eye-right"></div>
+        <div class="mouth"></div>
+        <div class="body"></div>
+        <div class="feature extra1"></div>
+        <div class="feature extra2"></div>
+    </div>
+    <div id="charStory"></div>
+    <!-- Contenedor de preguntas -->
+    <div id="questions-container">
+        <ul class="question-list" id="questionList">
+            <!-- Las preguntas se insertarán aquí dinámicamente -->
+        </ul>
+    </div>
+    <button id="submitBtn">Ver Resultados</button>
+    <!-- Contenedor del gráfico de resultados -->
+    <div id="chartContainer">
+        <canvas id="resultChart"></canvas>
+    </div>
+    <div id="screenshotMsg"></div>
 
-  <script>
-    // Array de 140 preguntas, distribuidas en 4 pilares (35 cada uno).
-    // Se ha revisado duplicados; por ejemplo, la pregunta repetida en racialidad (id 16) se reemplaza en id 23.
-    const questions = [
-      // PILLAR: racialidad (35 preguntas)
-      { id: 1,  text: "¿Has sentido que tu religión afecta la percepción que otros tienen de ti?", pillar: "racialidad" },
-      { id: 2,  text: "¿Te han hecho comentarios despectivos sobre tu origen étnico?", pillar: "racialidad" },
-      { id: 3,  text: "¿Has sido objeto de burlas debido a tu acento o dialecto?", pillar: "racialidad" },
-      { id: 4,  text: "¿Has tenido que justificar tu nacionalidad en tu entorno laboral?", pillar: "racialidad" },
-      { id: 5,  text: "¿Te han cuestionado tu identidad por tu apariencia racial?", pillar: "racialidad" },
-      { id: 6,  text: "¿Has experimentado exclusión en eventos sociales por tu origen?", pillar: "racialidad" },
-      { id: 7,  text: "¿Te han asignado roles estereotipados basados en tu etnia?", pillar: "racialidad" },
-      { id: 8,  text: "¿Te han hecho sentir como un forastero por tu religión o etnia?", pillar: "racialidad" },
-      { id: 9,  text: "¿Te han tratado de manera diferente en servicios públicos por tu origen?", pillar: "racialidad" },
-      { id: 10, text: "¿Te han negado oportunidades debido a prejuicios sobre tu raza?", pillar: "racialidad" },
-      { id: 11, text: "¿Has sido objeto de discriminación en instituciones educativas por tu etnia?", pillar: "racialidad" },
-      { id: 12, text: "¿Te han cuestionado tus tradiciones culturales en ámbitos profesionales?", pillar: "racialidad" },
-      { id: 13, text: "¿Has recibido comentarios despectivos sobre tu color de piel?", pillar: "racialidad" },
-      { id: 14, text: "¿Te han etiquetado de manera negativa en redes sociales por tu origen?", pillar: "racialidad" },
-      { id: 15, text: "¿Has sido excluido de ciertos espacios por tu identidad racial?", pillar: "racialidad" },
-      { id: 16, text: "¿Te han hecho sentir inferior por tu procedencia?", pillar: "racialidad" },
-      { id: 17, text: "¿Has experimentado microagresiones relacionadas con tu origen?", pillar: "racialidad" },
-      { id: 18, text: "¿Te han dicho que no encajas en la sociedad por tu apariencia?", pillar: "racialidad" },
-      { id: 19, text: "¿Has notado diferencias de trato en instituciones gubernamentales?", pillar: "racialidad" },
-      { id: 20, text: "¿Te han cuestionado tus habilidades basadas en estereotipos raciales?", pillar: "racialidad" },
-      { id: 21, text: "¿Has sido objeto de burlas por tus prácticas culturales o religiosas?", pillar: "racialidad" },
-      { id: 22, text: "¿Te han negado ciertos servicios por prejuicios relacionados con tu origen?", pillar: "racialidad" },
-      { id: 23, text: "¿Has sentido que se espera que representes a toda tu comunidad debido a tu origen?", pillar: "racialidad" },
-      { id: 24, text: "¿Has tenido que modificar tu comportamiento por miedo a ser juzgado por tu etnia?", pillar: "racialidad" },
-      { id: 25, text: "¿Te han impuesto normas basadas en tu religión en ámbitos públicos?", pillar: "racialidad" },
-      { id: 26, text: "¿Has sido excluido de promociones laborales por tu origen étnico?", pillar: "racialidad" },
-      { id: 27, text: "¿Te han tratado con desconfianza debido a tu apariencia?", pillar: "racialidad" },
-      { id: 28, text: "¿Has enfrentado comentarios ofensivos sobre tu identidad cultural?", pillar: "racialidad" },
-      { id: 29, text: "¿Te han dicho que no eres de 'verdadera' cultura debido a tu origen?", pillar: "racialidad" },
-      { id: 30, text: "¿Has sido objeto de discriminación en servicios de salud por tu etnia?", pillar: "racialidad" },
-      { id: 31, text: "¿Te han hecho sentir que debes adaptarte a otra cultura para encajar?", pillar: "racialidad" },
-      { id: 32, text: "¿Has experimentado discriminación en espacios de ocio por tu religión?", pillar: "racialidad" },
-      { id: 33, text: "¿Te han cuestionado tu pertenencia a un grupo por tu aspecto racial?", pillar: "racialidad" },
-      { id: 34, text: "¿Has sido etiquetado negativamente en eventos comunitarios por tu etnia?", pillar: "racialidad" },
-      { id: 35, text: "¿Te han negado la representación adecuada en medios por tu origen?", pillar: "racialidad" },
-
-      // PILLAR: feminidades (35 preguntas)
-      { id: 36, text: "¿Has sido juzgado por la forma en que vistes?", pillar: "feminidades" },
-      { id: 37, text: "¿Te han cuestionado tu identidad de género en entornos laborales?", pillar: "feminidades" },
-      { id: 38, text: "¿Has recibido comentarios sobre tu orientación sexual?", pillar: "feminidades" },
-      { id: 39, text: "¿Te han dicho que no encajas en los roles tradicionales de género?", pillar: "feminidades" },
-      { id: 40, text: "¿Has sido objeto de chismes por tu vida amorosa o deseos?", pillar: "feminidades" },
-      { id: 41, text: "¿Te han negado oportunidades por ser parte de la comunidad LGBT+?", pillar: "feminidades" },
-      { id: 42, text: "¿Has experimentado discriminación por tu expresión de género?", pillar: "feminidades" },
-      { id: 43, text: "¿Te han llamado a cumplir roles de género preestablecidos?", pillar: "feminidades" },
-      { id: 44, text: "¿Has sido excluido de ciertos eventos por tu identidad?", pillar: "feminidades" },
-      { id: 45, text: "¿Te han hecho sentir que no puedes mostrar tu verdadero yo en público?", pillar: "feminidades" },
-      { id: 46, text: "¿Has recibido comentarios despectivos sobre tu masculinidad o feminidad?", pillar: "feminidades" },
-      { id: 47, text: "¿Te han cuestionado por no seguir normas de comportamiento de género?", pillar: "feminidades" },
-      { id: 48, text: "¿Has sido presionado para conformarte a estereotipos de género?", pillar: "feminidades" },
-      { id: 49, text: "¿Te han juzgado por tu preferencia en parejas o relaciones?", pillar: "feminidades" },
-      { id: 50, text: "¿Has sido criticado por expresar afecto de manera no convencional?", pillar: "feminidades" },
-      { id: 51, text: "¿Te han dicho que tu orientación sexual es un problema?", pillar: "feminidades" },
-      { id: 52, text: "¿Has sentido que tu sexualidad es motivo de discriminación?", pillar: "feminidades" },
-      { id: 53, text: "¿Te han cuestionado tu capacidad para liderar debido a tu género?", pillar: "feminidades" },
-      { id: 54, text: "¿Has sido excluido de roles de liderazgo por cuestiones de género?", pillar: "feminidades" },
-      { id: 55, text: "¿Te han ignorado en conversaciones importantes por tu identidad?", pillar: "feminidades" },
-      { id: 56, text: "¿Has recibido comentarios que minimizan tu experiencia en el amor?", pillar: "feminidades" },
-      { id: 57, text: "¿Te han dicho que no eres 'suficientemente' masculino/femenino?", pillar: "feminidades" },
-      { id: 58, text: "¿Has sido objeto de chistes ofensivos relacionados con tu orientación?", pillar: "feminidades" },
-      { id: 59, text: "¿Te han cuestionado tu lugar en espacios reservados para un género?", pillar: "feminidades" },
-      { id: 60, text: "¿Has sentido que debes ocultar aspectos de tu identidad para ser aceptado?", pillar: "feminidades" },
-      { id: 61, text: "¿Te han indicado que debes actuar de una manera que no te corresponde?", pillar: "feminidades" },
-      { id: 62, text: "¿Has sido ridiculizado por romper estereotipos de género?", pillar: "feminidades" },
-      { id: 63, text: "¿Te han excluido de debates por tu identidad sexual?", pillar: "feminidades" },
-      { id: 64, text: "¿Has tenido que cambiar tu comportamiento para evitar ser discriminado?", pillar: "feminidades" },
-      { id: 65, text: "¿Te han dicho que tus deseos son inapropiados o tabú?", pillar: "feminidades" },
-      { id: 66, text: "¿Has sentido que tu vida amorosa es motivo de juicio social?", pillar: "feminidades" },
-      { id: 67, text: "¿Te han hecho sentir que perteneces a un grupo marginado por tu género?", pillar: "feminidades" },
-      { id: 68, text: "¿Has sido descalificado en discusiones por tu orientación sexual?", pillar: "feminidades" },
-      { id: 69, text: "¿Te han dicho que no puedes tener éxito debido a tu identidad de género?", pillar: "feminidades" },
-      { id: 70, text: "¿Has experimentado rechazo por parte de familiares por tu orientación?", pillar: "feminidades" },
-      
-      // PILLAR: clase (35 preguntas)
-      { id: 71, text: "¿Tienes una casa de propiedad?", pillar: "clase" },
-      { id: 72, text: "¿Pagas alquiler o hipoteca?", pillar: "clase" },
-      { id: 73, text: "¿El gasto en vivienda representa una parte importante de tus ingresos?", pillar: "clase" },
-      { id: 74, text: "¿Has tenido dificultades para acceder a servicios financieros?", pillar: "clase" },
-      { id: 75, text: "¿Te sientes presionado por tu situación económica al buscar empleo?", pillar: "clase" },
-      { id: 76, text: "¿Has experimentado discriminación laboral por tu origen social?", pillar: "clase" },
-      { id: 77, text: "¿Te han rechazado oportunidades de educación por falta de recursos?", pillar: "clase" },
-      { id: 78, text: "¿Sientes que las políticas públicas no te benefician económicamente?", pillar: "clase" },
-      { id: 79, text: "¿Has tenido que renunciar a oportunidades por razones económicas?", pillar: "clase" },
-      { id: 80, text: "¿Te han estigmatizado por vivir en un barrio de clase trabajadora?", pillar: "clase" },
-      { id: 81, text: "¿Sientes que tu estatus económico afecta tus relaciones sociales?", pillar: "clase" },
-      { id: 82, text: "¿Has sido juzgado por tu forma de vestir o de hablar?", pillar: "clase" },
-      { id: 83, text: "¿Te han hecho sentir inferior por tu posición social?", pillar: "clase" },
-      { id: 84, text: "¿Has tenido problemas para acceder a servicios de salud por tu situación económica?", pillar: "clase" },
-      { id: 85, text: "¿Sientes que no puedes competir en igualdad de condiciones debido a tu clase?", pillar: "clase" },
-      { id: 86, text: "¿Has tenido que trabajar más de un empleo para cubrir tus necesidades?", pillar: "clase" },
-      { id: 87, text: "¿Te han dicho que no eres lo suficientemente 'refinado'?", pillar: "clase" },
-      { id: 88, text: "¿Has sido excluido de ciertos círculos sociales por tu origen?", pillar: "clase" },
-      { id: 89, text: "¿Sientes que tu patrimonio limita tus oportunidades?", pillar: "clase" },
-      { id: 90, text: "¿Te han discriminado en servicios de ocio o culturales por tu clase?", pillar: "clase" },
-      { id: 91, text: "¿Has experimentado comentarios despectivos sobre tu nivel económico?", pillar: "clase" },
-      { id: 92, text: "¿Sientes que la sociedad te etiqueta por tu situación financiera?", pillar: "clase" },
-      { id: 93, text: "¿Te han cuestionado tu capacidad profesional por tu origen social?", pillar: "clase" },
-      { id: 94, text: "¿Has tenido problemas para acceder a una educación superior de calidad?", pillar: "clase" },
-      { id: 95, text: "¿Sientes que las oportunidades económicas están reservadas para otros?", pillar: "clase" },
-      { id: 96, text: "¿Has sido ignorado en procesos de selección por tu bagaje social?", pillar: "clase" },
-      { id: 97, text: "¿Te han dicho que no perteneces a ciertos ambientes por tu situación económica?", pillar: "clase" },
-      { id: 98, text: "¿Has enfrentado dificultades para acceder a créditos o préstamos?", pillar: "clase" },
-      { id: 99, text: "¿Sientes que tu origen social afecta tu seguridad en el empleo?", pillar: "clase" },
-      { id: 100, text: "¿Te han hecho sentir que debes trabajar el doble para demostrar tu valía?", pillar: "clase" },
-      { id: 101, text: "¿Has experimentado exclusión en eventos empresariales o de networking?", pillar: "clase" },
-      { id: 102, text: "¿Sientes que tu nivel socioeconómico influye en tu calidad de vida?", pillar: "clase" },
-      { id: 103, text: "¿Has tenido que renunciar a proyectos personales por falta de recursos?", pillar: "clase" },
-      { id: 104, text: "¿Te han estigmatizado por no poder costear ciertos lujos?", pillar: "clase" },
-      { id: 105, text: "¿Sientes que las oportunidades de ascenso están limitadas para ti?", pillar: "clase" },
-      
-      // PILLAR: capacitismo (35 preguntas)
-      { id: 106, text: "¿Has enfrentado barreras de accesibilidad en edificios públicos?", pillar: "capacitismo" },
-      { id: 107, text: "¿Te han negado oportunidades laborales por tu discapacidad?", pillar: "capacitismo" },
-      { id: 108, text: "¿Has sentido que los servicios de salud no se adaptan a tus necesidades?", pillar: "capacitismo" },
-      { id: 109, text: "¿Te han ignorado en situaciones en las que necesitabas ayuda especial?", pillar: "capacitismo" },
-      { id: 110, text: "¿Has tenido dificultades para acceder a transporte público adaptado?", pillar: "capacitismo" },
-      { id: 111, text: "¿Sientes que la sociedad subestima tus capacidades por tu condición?", pillar: "capacitismo" },
-      { id: 112, text: "¿Te han hecho comentarios despectivos sobre tu discapacidad?", pillar: "capacitismo" },
-      { id: 113, text: "¿Has sido excluido de eventos o actividades por falta de accesibilidad?", pillar: "capacitismo" },
-      { id: 114, text: "¿Te han cuestionado tu capacidad para desempeñar tareas cotidianas?", pillar: "capacitismo" },
-      { id: 115, text: "¿Sientes que tu entorno no se adapta a tus necesidades físicas?", pillar: "capacitismo" },
-      { id: 116, text: "¿Has tenido que luchar para recibir ajustes razonables en el trabajo?", pillar: "capacitismo" },
-      { id: 117, text: "¿Te han hecho sentir que eres una carga debido a tu discapacidad?", pillar: "capacitismo" },
-      { id: 118, text: "¿Has enfrentado actitudes paternalistas por parte de desconocidos?", pillar: "capacitismo" },
-      { id: 119, text: "¿Te han negado servicios esenciales por tu condición?", pillar: "capacitismo" },
-      { id: 120, text: "¿Sientes que los espacios públicos no son inclusivos para ti?", pillar: "capacitismo" },
-      { id: 121, text: "¿Has tenido que cambiar tu ruta por falta de infraestructura accesible?", pillar: "capacitismo" },
-      { id: 122, text: "¿Te han subestimado en entornos educativos por tu discapacidad?", pillar: "capacitismo" },
-      { id: 123, text: "¿Sientes que tus habilidades son ignoradas en conversaciones importantes?", pillar: "capacitismo" },
-      { id: 124, text: "¿Te han etiquetado de forma negativa por necesitar asistencia?", pillar: "capacitismo" },
-      { id: 125, text: "¿Has experimentado exclusión social debido a tu condición física?", pillar: "capacitismo" },
-      { id: 126, text: "¿Te han hecho sentir que debes pedir permiso para participar?", pillar: "capacitismo" },
-      { id: 127, text: "¿Sientes que los medios de comunicación representan de forma estereotipada a las personas con discapacidad?", pillar: "capacitismo" },
-      { id: 128, text: "¿Te han preguntado de forma invasiva sobre tu discapacidad?", pillar: "capacitismo" },
-      { id: 129, text: "¿Has tenido problemas para acceder a tecnologías adaptadas?", pillar: "capacitismo" },
-      { id: 130, text: "¿Te han dicho que ciertas actividades no son para ti?", pillar: "capacitismo" },
-      { id: 131, text: "¿Sientes que tu discapacidad limita tus oportunidades de liderazgo?", pillar: "capacitismo" },
-      { id: 132, text: "¿Has enfrentado barreras en eventos deportivos o culturales?", pillar: "capacitismo" },
-      { id: 133, text: "¿Te han discriminado en ambientes laborales por tus necesidades especiales?", pillar: "capacitismo" },
-      { id: 134, text: "¿Sientes que no recibes el apoyo adecuado en instituciones públicas?", pillar: "capacitismo" },
-      { id: 135, text: "¿Te han dicho que deberías conformarte con menos debido a tu condición?", pillar: "capacitismo" },
-      { id: 136, text: "¿Has sentido que tu voz no es escuchada en debates sobre accesibilidad?", pillar: "capacitismo" },
-      { id: 137, text: "¿Te han negado la posibilidad de participar en actividades recreativas?", pillar: "capacitismo" },
-      { id: 138, text: "¿Sientes que los entornos digitales no son lo suficientemente accesibles?", pillar: "capacitismo" },
-      { id: 139, text: "¿Te han hecho sentir que tu discapacidad define todas tus capacidades?", pillar: "capacitismo" },
-      { id: 140, text: "¿Has enfrentado actitudes excluyentes en espacios culturales o artísticos?", pillar: "capacitismo" }
+    <!-- Cargar Chart.js (desde CDN) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    // Definición de preguntas por categoría (arrays de strings)
+    var preguntasRacial = [
+        "¿Crees que algunas razas o etnias son más inteligentes que otras?",
+        "Si un familiar tuyo se casara con alguien de otra raza, ¿te incomodaría?",
+        "¿Has contado o reído chistes basados en estereotipos raciales?",
+        "¿Te sentirías inseguro caminando por un barrio donde la mayoría de residentes son de otra raza que la tuya?",
+        "¿Piensas que las personas de ciertas etnias tienen tendencias naturales hacia el crimen o la violencia?",
+        "Al conocer a una persona, ¿te fijas en su color de piel antes que en otras cualidades?",
+        "¿Crees que la discriminación racial ya no es un problema importante en la sociedad actual?",
+        "¿Te incomoda ver parejas interraciales?",
+        "¿Has pensado alguna vez que alguien obtuvo un trabajo o beca solo por su raza y no por sus méritos?",
+        "Si un desconocido de otra raza se te acerca en la calle para pedirte ayuda, ¿dudarías más en ayudarlo que si fuera de tu raza?",
+        "¿Crees que es aceptable decir \"regresa a tu país\" a alguien nacido en tu país pero de diferente origen étnico?",
+        "¿Has usado palabras despectivas para referirte a personas de otra raza (aunque sea en privado)?",
+        "¿Te parece que exageran las personas que denuncian racismo en bromas o comentarios cotidianos?",
+        "¿Preferirías evitar comprar en un negocio atendido por personas de cierta etnia?",
+        "¿Asumes que alguien es bueno en cierto deporte o música solo por su origen étnico?",
+        "Si tu jefe inmediato fuera de una raza minoritaria distinta a la tuya, ¿te costaría aceptar sus órdenes o liderazgo?",
+        "¿Crees que en ciertos países la gente es 'de tal manera' (perezosa, sucia, fría, etc.) por su raza u origen?",
+        "¿Te molesta cuando una persona de otra raza destaca o tiene éxito en un ámbito donde tu grupo suele dominar?",
+        "¿Te has alejado deliberadamente de alguien en un espacio público por prejuicios sobre su raza?",
+        "¿Crees que es normal preferir amistad con personas de tu misma raza y que no es racismo sino “gustos personales”?",
+        "¿Evitarías que tus hijos jugaran con niños de otra etnia o raza?"
     ];
-    
-    // Agrupamos las preguntas por pilar
-    const pillars = {};
-    questions.forEach(q => {
-      if (!pillars[q.pillar]) {
-        pillars[q.pillar] = [];
-      }
-      pillars[q.pillar].push(q);
-    });
-    
-    const container = document.getElementById('questions-container');
-    // Orden de presentación de pilares
-    const pillarOrder = ["racialidad", "feminidades", "clase", "capacitismo"];
-    
-    pillarOrder.forEach(pillar => {
-      const section = document.createElement('div');
-      section.classList.add('category');
-      let headerText = "";
-      if(pillar === "racialidad") headerText = "Racialidad (35 preguntas)";
-      else if(pillar === "feminidades") headerText = "Feminidades (35 preguntas)";
-      else if(pillar === "clase") headerText = "Clase (35 preguntas)";
-      else if(pillar === "capacitismo") headerText = "Capacitismo (35 preguntas)";
-      const header = document.createElement('h2');
-      header.textContent = headerText;
-      section.appendChild(header);
-      
-      pillars[pillar].forEach(q => {
-        const qDiv = document.createElement('div');
-        qDiv.classList.add('question');
-        const label = document.createElement('label');
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.dataset.category = pillar;
-        label.appendChild(checkbox);
-        label.appendChild(document.createTextNode(q.text));
-        qDiv.appendChild(label);
-        section.appendChild(qDiv);
-      });
-      
-      container.appendChild(section);
-    });
-    
-    function toggleTheme() {
-      document.body.classList.toggle('light-theme');
+
+    var preguntasGenero = [
+        "¿Crees que los hombres están naturalmente más capacitados para ciertas tareas o trabajos que las mujeres?",
+        "¿Piensas que las mujeres deberían ser las principales encargadas de las tareas del hogar?",
+        "¿Te incomoda ver a un hombre expresar abiertamente sus emociones (por ejemplo, llorar)?",
+        "¿Crees que los hombres son mejores conductores que las mujeres?",
+        "Si un jefe es mujer, ¿tiendes a cuestionar más sus decisiones que si fuera hombre?",
+        "¿Has hecho o reído chistes machistas (que ridiculizan a las mujeres por ser mujeres)?",
+        "¿Te parece que cuando una mujer se enfada es \"histérica\" pero si un hombre lo hace es algo normal?",
+        "¿Piensas que un hombre que decide quedarse en casa a cuidar a los hijos es menos hombre?",
+        "¿Te molesta o extraña ver mujeres en trabajos tradicionalmente masculinos (ejemplo: mecánica, construcción)?",
+        "¿Crees que las personas transgénero están equivocadas y su género \"real\" es el de nacimiento?",
+        "¿Evitarías usar los pronombres o el nombre preferido de una persona trans porque \"no es su género real\"?",
+        "¿Consideras que los hombres no deben realizar tareas consideradas femeninas, como cocinar o limpiar, en la misma medida?",
+        "¿Crees que las mujeres son demasiado emocionales para puestos de alta responsabilidad?",
+        "Si vieras a un niño jugando con muñecas o a una niña jugando con coches, ¿tratarías de redirigirlo hacia juegos \"propios de su género\"?",
+        "¿Te incomoda la idea de tener un colega cercano que sea no binario (que no se identifica como hombre ni mujer)?",
+        "¿Crees que en un equipo de trabajo mixto, las mujeres deberían asumir roles más de apoyo y los hombres liderar?",
+        "¿Has cuestionado la competencia de una profesional (doctora, ingeniera) solo por ser mujer, pensando que un hombre lo haría mejor?",
+        "¿Opinas que los hombres gays no encajan en tu concepto de \"verdadero hombre\"?",
+        "¿Te resultaría incómodo que tu hijo/a tuviera como profesor a alguien transgénero o no binario?",
+        "¿Crees que las mujeres que se visten de manera provocativa son responsables si sufren acoso?",
+        "¿Pensarías que algo \"anda mal\" si una niña nunca quiere vestir de rosa ni jugar con muñecas?"
+    ];
+
+    var preguntasReligiosa = [
+        "¿Consideras que tu religión o creencias son superiores a las de otras personas?",
+        "¿Te incomoda trabajar o estudiar junto a alguien que practique una religión muy distinta a la tuya?",
+        "¿Piensas automáticamente que alguien de cierta religión, por ejemplo musulmán, podría ser un extremista o peligroso?",
+        "¿Has hecho bromas o comentarios negativos generalizando sobre una religión (ejemplo: todos los __ son __)?",
+        "Si un amigo cercano se convirtiera a otra religión, ¿te costaría aceptarlo o entenderlo?",
+        "¿Crees que las personas sin religión (ateos) tienen menos valores morales que las religiosas?",
+        "¿Te molesta ver a personas exhibiendo símbolos religiosos (cruz, velo, turbante) en lugares públicos?",
+        "¿Evitarías que tu hijo/a se casara con alguien de cierta religión que desapruebas?",
+        "¿Piensas que algunas religiones modernas son sectas peligrosas sin realmente informarte de ellas?",
+        "¿Has excluido o dejado de invitar a alguien a eventos sociales por sus creencias religiosas?",
+        "¿Crees que las personas muy devotas de su religión son ignorantes o han sido \"lavadas del cerebro\"?",
+        "¿Te sientes incómodo discutiendo temas científicos con alguien muy religioso porque asumes que no entenderá?",
+        "Si un compañero de trabajo pide tiempo para orar durante el día, ¿te parecería inapropiado en el entorno laboral?",
+        "¿Crees que algunas religiones promueven únicamente cosas malas y no pueden tener aspectos positivos?",
+        "Si tuvieras un jefe de una religión minoritaria, ¿dudarías de sus decisiones por sus creencias?",
+        "¿Te burlarías o harías comentarios sarcásticos si alguien te dice que confía en la voluntad de Dios?",
+        "¿Has evitado entablar amistad con alguien tras enterarte de que practica una religión que consideras rara?",
+        "¿Crees que las guerras y conflictos siempre son culpa de la religión y que el mundo estaría mejor sin ninguna?",
+        "¿Te molestaría que se construyera un centro de culto (iglesia, mezquita, etc.) de una religión ajena cerca de tu comunidad?",
+        "¿Piensas que las festividades religiosas de otras culturas son extrañas o ridículas?",
+        "¿Tratas con menos respeto a alguien que sabes que tiene creencias muy distintas a las tuyas?"
+    ];
+
+    var preguntasCapacitista = [
+        "¿Crees que las personas con discapacidad deben centrarse en sus limitaciones y no intentar ciertas cosas?",
+        "¿Te sientes incómodo al interactuar con alguien que tiene una discapacidad visible porque no sabes cómo actuar?",
+        "¿Has usado términos ofensivos para referirte a personas con discapacidad (aunque sea bromeando)?",
+        "¿Asumes que una persona en silla de ruedas también tiene alguna discapacidad mental, o viceversa?",
+        "Si tu empresa tuviera que contratar a un candidato con una discapacidad evidente, ¿pensarías que sería menos productivo que los demás?",
+        "¿Te molesta si alguien con discapacidad recibe adaptaciones especiales (rampas, horarios) porque lo ves como trato preferencial?",
+        "¿Crees que las personas con trastornos mentales (depresión, ansiedad, etc.) exageran y deberían simplemente \"echarle ganas\"?",
+        "¿Evitarías salir románticamente con alguien solo por enterarte de que tiene una discapacidad?",
+        "¿Tiendes a hablarle más fuerte o más lento a alguien con discapacidad sin que te lo pidan, como si no pudiera entenderte?",
+        "¿Has pensado que ciertas actividades (viajar solo, vivir independiente) no son para personas con discapacidad?",
+        "¿Crees que todas las personas con autismo, síndrome de Down u otras condiciones son más o menos iguales en comportamiento?",
+        "¿Te incomoda ver a una pareja donde una persona tiene discapacidad y la otra no?",
+        "Si ves a alguien usando un estacionamiento para discapacitados sin aparentemente tener nada, ¿asumes que está abusando de ello (aunque podría tener una discapacidad invisible)?",
+        "¿Piensas que los atletas paralímpicos no son tan atletas como los olímpicos?",
+        "¿Te daría miedo o rechazo interactuar con alguien con una discapacidad cognitiva severa?",
+        "¿Crees que se gasta demasiado en hacer sitios accesibles para relativamente pocas personas?",
+        "¿Te sorprende en exceso cuando una persona con discapacidad logra algo, como si fuera extraordinario solo por su condición?",
+        "¿Has evitado conversar con alguien en silla de ruedas u otra ayuda técnica porque no sabías cómo saludarlo normalmente?",
+        "¿Crees que las personas con discapacidad deben \"aceptar sus límites\" y no intentar integrarse en todos los ámbitos?",
+        "¿Te molestaría tener un jefe o líder de equipo con una discapacidad significativa?",
+        "¿Alguna vez has dudado de la veracidad de la discapacidad de alguien pensando que tal vez exagera o finge?"
+    ];
+
+    var preguntasCultural = [
+        "¿Crees que tu cultura o país es en general mejor que otros?",
+        "¿Te molesta cuando escuchas a personas hablando en un idioma que no entiendes en público?",
+        "¿Has imitado o exagerado el acento de alguien de otra región o país para burlarte?",
+        "¿Piensas que los inmigrantes suelen traer problemas o delincuencia al país?",
+        "¿Prefieres no ver películas o series de cierto país porque asumes que no serán buenas solo por su origen?",
+        "¿Te has quejado de que en tu país hay costumbres extranjeras que arruinan la cultura local?",
+        "¿Crees que es justificable desconfiar de alguien que habla con fuerte acento extranjero en tu idioma?",
+        "¿Evitarías que tu hijo hiciera amistad con un niño que no hable bien tu idioma?",
+        "¿Te parece que ciertas comunidades inmigrantes no se esfuerzan por integrarse y eso te molesta?",
+        "¿Has usado expresiones como \"tercermundista\" de forma despectiva para referirte a algo de otro país?",
+        "Si recibes atención al cliente por teléfono y la persona tiene acento extranjero, ¿dudas de su capacidad o te molesta?",
+        "¿Crees que hay nacionalidades naturalmente más trabajadoras y otras más perezosas?",
+        "¿Te sientes incómodo cuando eres la única persona de tu nacionalidad en un grupo?",
+        "¿Has pensado que las personas que no hablan bien tu idioma son menos inteligentes?",
+        "¿Te molesta cuando los inmigrantes mantienen sus costumbres en lugar de adoptar por completo las locales?",
+        "¿Evitarías visitar ciertos países porque crees que su gente no te trataría bien por ser extranjero?",
+        "¿Crees que en tu país deberían restringir la entrada a personas de ciertos países o culturas?",
+        "¿Te ofende que alguien de otro país critique aspectos de tu cultura?",
+        "¿Has tenido prejuicios contra alguien por provenir de una región específica de tu propio país?",
+        "¿Crees que la globalización está diluyendo la identidad nacional y eso te preocupa?",
+        "¿Evitarías probar la comida típica de alguna cultura por prejuicios sobre sus ingredientes o higiene?"
+    ];
+
+    var preguntasSocioeconomica = [
+        "¿Crees que si alguien es pobre es mayormente por falta de esfuerzo?",
+        "¿Te has referido despectivamente a personas de bajos recursos con términos ofensivos (ejemplo: vagos)?",
+        "¿Te sentirías incómodo teniendo una cita con alguien de un nivel socioeconómico mucho más bajo que el tuyo?",
+        "¿Crees que las personas que viven en la calle seguramente hicieron algo para merecerlo?",
+        "Si alguien se veste con ropa muy humilde o gastada, ¿lo tratas diferente que a alguien con ropa elegante?",
+        "¿Evitarías ir a la casa de alguien si vive en un barrio muy pobre o conocido por la delincuencia?",
+        "¿Crees que las personas con menos educación formal son menos inteligentes o cultas?",
+        "¿Te molesta ver a personas de bajos recursos recibiendo ayudas del gobierno?",
+        "¿Has pensado que la gente pobre tiene valores diferentes o inferiores a los tuyos?",
+        "¿Tratarías con mayor respeto a alguien que sabes que es millonario frente a alguien de clase media?",
+        "¿Te parece mal que personas de bajos recursos accedan a lugares o servicios \"exclusivos\"?",
+        "¿Crees que la gente rica es generalmente egoísta o superficial?",
+        "Si invitaras amigos a tu casa, ¿te avergonzaría si fuera mucho más humilde que la de ellos?",
+        "¿Has evitado una amistad tras descubrir que la persona tenía mucho menos dinero que tú?",
+        "¿Piensas que la gente de clase alta suele mirar en menos a los demás (y por eso evitas tratarlos)?",
+        "¿Te incomodaría que tu hijo se case con alguien de una familia mucho más pobre?",
+        "¿Crees que la gente de barrios marginales no quiere mejorar su situación?",
+        "¿Evitas lugares donde suele haber muchos vendedores ambulantes o gente pidiendo dinero?",
+        "¿Te sientes incómodo en reuniones donde hay personas de niveles económicos muy diversos?",
+        "¿Crees que alguien con un coche muy viejo es menos exitoso que quien tiene uno nuevo?",
+        "¿Has pensado que ciertos servicios de calidad deberían ser privilegio de quien pueda pagarlos y no para todos?"
+    ];
+
+    var preguntasEdad = [
+        "¿Crees que la mayoría de las personas mayores de 65 años no entienden de tecnología?",
+        "¿Evitarías contratar a alguien cercano a la edad de jubilación, aunque esté capacitado, por su edad?",
+        "¿Te parece que los adolescentes son por lo general irresponsables y poco fiables?",
+        "¿Has usado frases como \"Ok, boomer\" o \"millennial típico\" para descartar la opinión de alguien por su edad?",
+        "¿Crees que a partir de cierta edad (ejemplo: 70 años) las personas ya no deben tomar decisiones importantes por sí mismas?",
+        "¿Te sientes incómodo recibiendo órdenes de alguien mucho más joven que tú en el trabajo?",
+        "¿Piensas que las personas de veintitantos años hoy son demasiado sensibles o \"de cristal\"?",
+        "¿Tiendes a creer que los conductores jóvenes son imprudentes solo por su edad?",
+        "¿Has pensado que alguien es \"demasiado viejo\" para vestir de cierta manera o escuchar cierto tipo de música?",
+        "¿Evitas invitar a personas de mucha mayor edad a ciertas actividades asumiendo que no podrán seguir el ritmo?",
+        "¿Crees que los niños pequeños no pueden tener opiniones válidas hasta que crezcan más?",
+        "¿Te molesta cuando alguien menor que tú trata de aconsejarte o enseñarte algo?",
+        "¿Asumes que una persona muy joven en un puesto alto obtuvo el trabajo por conexiones y no por mérito?",
+        "¿Crees que las personas mayores no deberían participar en ciertos deportes o actividades \"juveniles\"?",
+        "¿Te sientes avergonzado de la idea de salir a divertirte con personas mucho más jóvenes o mayores que tú?",
+        "¿Has dicho o pensado \"ya se le pasó la edad para eso\" sobre alguien que intenta algo nuevo de adulto?",
+        "¿Prefieres aprender cosas nuevas de alguien de tu edad o mayor, desconfiando si es mucho más joven?",
+        "¿Crees que los adolescentes de hoy tienen menos valores o disciplina que los de tu generación?",
+        "¿Te niegas a considerar ideas o tendencias nuevas solo porque vienen de gente muy joven?",
+        "¿Te parece normal bromear sobre la edad de alguien (llamarlo viejo o niño) aunque no lo harías sobre otras características?",
+        "¿Piensas que en ciertos campos (tecnología, moda) la gente mayor ya no puede aportar cosas innovadoras?"
+    ];
+
+    // Combinar todas las preguntas en una lista con su categoría
+    var todasPreguntas = [];
+    preguntasRacial.forEach(function(p) { todasPreguntas.push({texto: p, categoria: "racial"}); });
+    preguntasGenero.forEach(function(p) { todasPreguntas.push({texto: p, categoria: "genero"}); });
+    preguntasReligiosa.forEach(function(p) { todasPreguntas.push({texto: p, categoria: "religiosa"}); });
+    preguntasCapacitista.forEach(function(p) { todasPreguntas.push({texto: p, categoria: "capacitista"}); });
+    preguntasCultural.forEach(function(p) { todasPreguntas.push({texto: p, categoria: "cultural"}); });
+    preguntasSocioeconomica.forEach(function(p) { todasPreguntas.push({texto: p, categoria: "socioeconomica"}); });
+    preguntasEdad.forEach(function(p) { todasPreguntas.push({texto: p, categoria: "edad"}); });
+    // Mezclar las preguntas aleatoriamente (Fisher-Yates)
+    for (var i = todasPreguntas.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = todasPreguntas[i];
+        todasPreguntas[i] = todasPreguntas[j];
+        todasPreguntas[j] = temp;
     }
-    
-    function calculateResults() {
-      // Se obtiene el puntaje por pilar de forma dinámica según la cantidad de preguntas por cada uno
-      const categories = {
-        racialidad: { max: pillars['racialidad'].length, score: 0 },
-        feminidades: { max: pillars['feminidades'].length, score: 0 },
-        clase: { max: pillars['clase'].length, score: 0 },
-        capacitismo: { max: pillars['capacitismo'].length, score: 0 }
-      };
-      
-      document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
-        const category = checkbox.dataset.category;
-        if (categories[category]) {
-          categories[category].score++;
+
+    // Insertar las preguntas en el DOM
+    var questionList = document.getElementById("questionList");
+    todasPreguntas.forEach(function(qObj, index) {
+        // Crear elementos de lista con texto y opciones de sí/no
+        var li = document.createElement("li");
+        var spanText = document.createElement("span");
+        spanText.className = "question-text";
+        spanText.textContent = qObj.texto;
+        var answersSpan = document.createElement("span");
+        answersSpan.className = "answers";
+        // Crear inputs radio Sí y No con labels
+        var yesId = "q" + index + "yes";
+        var noId = "q" + index + "no";
+        var inputYes = document.createElement("input");
+        inputYes.type = "radio";
+        inputYes.id = yesId;
+        inputYes.name = "q" + index;
+        inputYes.value = "yes";
+        var labelYes = document.createElement("label");
+        labelYes.htmlFor = yesId;
+        labelYes.textContent = "Sí";
+        var inputNo = document.createElement("input");
+        inputNo.type = "radio";
+        inputNo.id = noId;
+        inputNo.name = "q" + index;
+        inputNo.value = "no";
+        var labelNo = document.createElement("label");
+        labelNo.htmlFor = noId;
+        labelNo.textContent = "No";
+        // Añadir elementos a la lista
+        answersSpan.appendChild(inputYes);
+        answersSpan.appendChild(labelYes);
+        answersSpan.appendChild(inputNo);
+        answersSpan.appendChild(labelNo);
+        li.appendChild(spanText);
+        li.appendChild(answersSpan);
+        // Guardar categoría como atributo (para uso futuro si se quiere)
+        li.setAttribute("data-categoria", qObj.categoria);
+        questionList.appendChild(li);
+    });
+
+    // Lógica del personaje aleatorio
+    var charIndex = Math.floor(Math.random() * 10);
+    var characterEl = document.getElementById("character");
+    var charStoryEl = document.getElementById("charStory");
+    // Definir características de cada personaje (colores, accesorios, historia)
+    var personajes = [
+        {
+            skin: "#FCD7B8", hair: "#8B4513", bodyColor: "#8BC34A",
+            extra1: {type: "hair", width: "60px", height: "30px", top: "-5px", background: "#8B4513", borderRadius: "50%"},
+            extra2: null,
+            mouthStyle: "smile",
+            story: "¡Hola! Soy Ana, me encanta aprender idiomas y defender la igualdad."
+        },
+        {
+            skin: "#8D5524", hair: null, bodyColor: "#FF9800",
+            extra1: null, extra2: null,
+            mouthStyle: "neutral",
+            story: "Soy Beto. Soy muy curioso y siempre hago preguntas para entender a los demás."
+        },
+        {
+            skin: "#C68642", hair: "#BBB", bodyColor: "#03A9F4",
+            extra1: {type: "hair", width: "60px", height: "20px", top: "0px", background: "#BBB", borderRadius: "0 0 50% 50%"},
+            extra2: null,
+            mouthStyle: "smile",
+            story: "Me llamo Carlos. Soy un profesor jubilado al que le encanta la tecnología."
+        },
+        {
+            skin: "#F1C27D", hair: "#367C94", bodyColor: "#FFC107",
+            extra1: {type: "hair", width: "70px", height: "70px", top: "-5px", background: "#367C94", borderRadius: "50%"},
+            extra2: null,
+            mouthStyle: "neutral",
+            story: "Soy Dalia. Llevo mi pañuelo con orgullo y estudio ingeniería."
+        },
+        {
+            skin: "#FFDBAC", hair: "#000", bodyColor: "#9C27B0",
+            extra1: {type: "hat", width: "50px", height: "20px", top: "-10px", background: "#000", borderRadius: "5px"},
+            extra2: null,
+            mouthStyle: "smile",
+            story: "¡Hey! Soy Ema. Siempre llevo mi gorra de la suerte a todos lados."
+        },
+        {
+            skin: "#FFD1DC", hair: "#E91E63", bodyColor: "#00BCD4",
+            extra1: {type: "hair", width: "60px", height: "30px", top: "-5px", background: "#E91E63", borderRadius: "50%"},
+            extra2: null,
+            mouthStyle: "smile",
+            story: "Soy Flor. Mi cabello rosa refleja mi personalidad alegre y creativa."
+        },
+        {
+            skin: "#FFE0BD", hair: null, bodyColor: "#FF5722",
+            extra1: {type: "glasses", leftEyeX: 14, rightEyeX: 40, top: "18px"},
+            extra2: null,
+            mouthStyle: "smile",
+            story: "Hola, soy Guille. Siempre tengo mis gafas listas para leer un buen libro."
+        },
+        {
+            skin: "#F1C27D", hair: "#000", bodyColor: "#4CAF50",
+            extra1: {type: "hair", width: "50px", height: "50px", top: "0px", background: "#000", borderRadius: "50%"},
+            extra2: null,
+            mouthStyle: "neutral",
+            story: "Me llamo Hiro. Soy programador y a veces puedo ser tímido, ¡pero me encanta hacer amigos!"
+        },
+        {
+            skin: "#8D5524", hair: "#FFEB3B", bodyColor: "#795548",
+            extra1: {type: "hair", width: "0", height: "0", borderLeft: "15px solid transparent", borderRight: "15px solid transparent", borderBottom: "30px solid #FFEB3B", top: "-15px", left: "50%", marginLeft: "-15px"},
+            extra2: null,
+            mouthStyle: "smile",
+            story: "Soy Iris. Aunque uso silla de ruedas, ¡nada me detiene en las carreras!"
+        },
+        {
+            skin: "#C68642", hair: "#2F4F4F", bodyColor: "#FF5722",
+            extra1: {type: "hair", width: "60px", height: "40px", top: "-10px", background: "#2F4F4F", borderRadius: "50%"},
+            extra2: null,
+            mouthStyle: "frown",
+            story: "Hola, soy José. Tengo un estilo punk y me gusta cuestionar todo."
         }
-      });
-      
-      let resultsHTML = '<h2>Resultados</h2>';
-      let totalScore = 0;
-      let totalMax = 0;
-      
-      for (const [category, data] of Object.entries(categories)) {
-        const percentage = ((data.score / data.max) * 100).toFixed(1);
-        resultsHTML += `
-          <p><strong>${category.charAt(0).toUpperCase() + category.slice(1)}:</strong>
-          ${data.score}/${data.max} (${percentage}%)</p>
-          <div class="progress-bar">
-            <div class="progress-bar-inner" style="width: ${percentage}%;"></div>
-          </div>
-        `;
-        totalScore += data.score;
-        totalMax += data.max;
-      }
-      
-      const average = ((totalScore / totalMax) * 100).toFixed(1);
-      resultsHTML += `<h3>Puntuación total: ${totalScore}/${totalMax} (${average}%)</h3>`;
-      
-      document.getElementById('results').innerHTML = resultsHTML;
+    ];
+    // Aplicar propiedades del personaje seleccionado
+    var personaje = personajes[charIndex];
+    // piel
+    characterEl.querySelector('.head').style.backgroundColor = personaje.skin;
+    // cabello o accesorio extra1
+    var extra1El = characterEl.querySelector('.extra1');
+    if (personaje.extra1) {
+        extra1El.style.display = "block";
+        if (personaje.extra1.type === "hair") {
+            extra1El.style.width = personaje.extra1.width;
+            extra1El.style.height = personaje.extra1.height;
+            extra1El.style.top = personaje.extra1.top;
+            extra1El.style.left = "50%";
+            extra1El.style.transform = "translateX(-50%)";
+            extra1El.style.backgroundColor = personaje.extra1.background;
+            extra1El.style.borderRadius = personaje.extra1.borderRadius;
+            extra1El.style.zIndex = "0";
+        } else if (personaje.extra1.type === "hat") {
+            extra1El.style.width = personaje.extra1.width;
+            extra1El.style.height = personaje.extra1.height;
+            extra1El.style.top = personaje.extra1.top;
+            extra1El.style.left = "50%";
+            extra1El.style.transform = "translateX(-50%)";
+            extra1El.style.backgroundColor = personaje.extra1.background;
+            extra1El.style.borderRadius = personaje.extra1.borderRadius;
+            extra1El.style.zIndex = "2";
+        } else if (personaje.extra1.type === "glasses") {
+            // crear lentes alrededor de los ojos
+            extra1El.style.width = "0";
+            extra1El.style.height = "0";
+            // Dibujar lentes con borde: usaremos pseudo-elementos quizá, pero por simplicidad dibujaremos dos círculos con CSS via JS
+            // Crear dos elementos para lentes
+            extra1El.innerHTML = "<span class='glasses-lens'></span><span class='glasses-lens'></span>";
+            var lensElems = extra1El.querySelectorAll('.glasses-lens');
+            lensElems.forEach(function(lens, idx) {
+                lens.style.position = "absolute";
+                lens.style.width = "14px";
+                lens.style.height = "14px";
+                lens.style.border = "2px solid #000";
+                lens.style.borderRadius = "50%";
+                lens.style.top = personaje.extra1.top;
+                lens.style.backgroundColor = "transparent";
+                if (idx === 0) {
+                    lens.style.left = "14px";
+                } else {
+                    lens.style.right = "14px";
+                }
+            });
+        }
+    } else {
+        extra1El.style.display = "none";
     }
-  </script>
+    // extra2 (si lo hubiera)
+    var extra2El = characterEl.querySelector('.extra2');
+    if (personaje.extra2) {
+        extra2El.style.display = "block";
+        // (Ninguno de nuestros personajes usa extra2 en este ejemplo)
+    } else {
+        extra2El.style.display = "none";
+    }
+    // color de ropa (body)
+    characterEl.querySelector('.body').style.backgroundColor = personaje.bodyColor;
+    // estilo de boca
+    var mouthEl = characterEl.querySelector('.mouth');
+    if (personaje.mouthStyle === "smile") {
+        mouthEl.style.width = "12px";
+        mouthEl.style.height = "6px";
+        mouthEl.style.backgroundColor = "#000";
+        mouthEl.style.borderRadius = "0 0 6px 6px";
+        mouthEl.style.border = "none";
+        mouthEl.style.top = "35px";
+    } else if (personaje.mouthStyle === "frown") {
+        mouthEl.style.width = "12px";
+        mouthEl.style.height = "6px";
+        mouthEl.style.backgroundColor = "#000";
+        mouthEl.style.borderRadius = "6px 6px 0 0";
+        mouthEl.style.border = "none";
+        mouthEl.style.top = "38px";
+    } else if (personaje.mouthStyle === "neutral") {
+        mouthEl.style.width = "8px";
+        mouthEl.style.height = "2px";
+        mouthEl.style.backgroundColor = "#000";
+        mouthEl.style.borderRadius = "1px";
+        mouthEl.style.border = "none";
+        mouthEl.style.top = "38px";
+    }
+
+    // Mostrar historia al hacer clic en el personaje
+    charStoryEl.textContent = personaje.story;
+    characterEl.addEventListener('click', function() {
+        if (charStoryEl.style.display === "none" || charStoryEl.style.display === "") {
+            charStoryEl.style.display = "block";
+        } else {
+            charStoryEl.style.display = "none";
+        }
+    });
+
+    // Manejar clic en Ver Resultados
+    var submitBtn = document.getElementById("submitBtn");
+    var resultChartEl = document.getElementById("resultChart");
+    var screenshotMsgEl = document.getElementById("screenshotMsg");
+    var radarChart; // para almacenar instancia del gráfico
+    submitBtn.addEventListener('click', function() {
+        // Validar que todas las preguntas tengan respuesta
+        var totalPreguntas = todasPreguntas.length;
+        var respondidas = document.querySelectorAll('input[type="radio"]:checked').length;
+        if (respondidas < totalPreguntas) {
+            alert("Por favor, responde a todas las preguntas antes de ver los resultados.");
+            return;
+        }
+        // Calcular resultados por categoría
+        var resultados = {
+            racial: 0,
+            genero: 0,
+            religiosa: 0,
+            capacitista: 0,
+            cultural: 0,
+            socioeconomica: 0,
+            edad: 0
+        };
+        todasPreguntas.forEach(function(qObj, idx) {
+            var seleccion = document.querySelector('input[name="q' + idx + '"]:checked').value;
+            if (seleccion === "yes") {
+                resultados[qObj.categoria] += 1;
+            }
+        });
+        // Preparar datos para el gráfico
+        var etiquetas = ["Racial", "Género", "Religiosa", "Capacitista", "Cultural", "Socioeconómica", "Edad"];
+        var datos = [
+            resultados.racial,
+            resultados.genero,
+            resultados.religiosa,
+            resultados.capacitista,
+            resultados.cultural,
+            resultados.socioeconomica,
+            resultados.edad
+        ];
+        // Crear o actualizar el gráfico radar
+        if (!radarChart) {
+            var ctx = resultChartEl.getContext('2d');
+            radarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: etiquetas,
+                    datasets: [{
+                        label: 'Resultados del Test',
+                        data: datos,
+                        backgroundColor: 'rgba(233,30,99,0.2)',
+                        borderColor: 'rgba(233,30,99,1)',
+                        pointBackgroundColor: 'rgba(233,30,99,1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: 1,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            pointLabels: { font: { size: 12, family: 'Luckiest Guy, sans-serif' } },
+                            ticks: { stepSize: 1 }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Discriminación (Sí = más sesgo en la categoría)',
+                            font: { size: 14, family: 'Luckiest Guy, sans-serif' }
+                        }
+                    }
+                }
+            });
+        } else {
+            radarChart.data.datasets[0].data = datos;
+            radarChart.update();
+        }
+        // Mostrar el gráfico y mensaje de captura
+        resultChartEl.style.display = "block";
+        // Generar instrucciones de captura según dispositivo
+        var instrucciones = "Recomendación: realiza una captura de pantalla de tus resultados.<br/>";
+        var ua = navigator.userAgent || navigator.platform;
+        if (/Windows/i.test(ua)) {
+            instrucciones += "En Windows: Presiona <b>Win + Impr Pant</b> (Print Screen) para guardar una captura, o <b>Win + Shift + S</b> para usar la herramienta de recorte.";
+        } else if (/Mac/i.test(ua)) {
+            instrucciones += "En Mac: Presiona <b>Shift + ⌘ + 3</b> para capturar la pantalla completa, o <b>Shift + ⌘ + 4</b> para capturar una parte.";
+        } else if (/Android/i.test(ua)) {
+            instrucciones += "En Android: Presiona simultáneamente <b>Volumen Abajo + Encendido</b> para hacer una captura.";
+        } else if (/iPhone|iPad|iPod/i.test(ua)) {
+            instrucciones += "En iOS: Presiona a la vez <b>Botón lateral (o superior) + Botón de inicio</b> (o <b>Volumen Arriba</b> en modelos sin botón de inicio).";
+        } else {
+            instrucciones += "En tu dispositivo, utiliza la combinación de teclas o herramienta correspondiente para tomar una captura de pantalla.";
+        }
+        screenshotMsgEl.innerHTML = instrucciones;
+        screenshotMsgEl.style.display = "block";
+        // Desplazar la vista hacia el gráfico para que el usuario lo vea
+        resultChartEl.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Agregar elementos decorativos al fondo
+    var decoraciones = ['circle1', 'circle2', 'square1', 'square2', 'triangle'];
+    decoraciones.forEach(function(cls) {
+        var decoEl = document.createElement('div');
+        decoEl.className = 'deco ' + cls;
+        document.body.appendChild(decoEl);
+    });
+    </script>
 </body>
 </html>
