@@ -13,6 +13,7 @@
       padding: 20px;
       font-family: 'Comic Neue', sans-serif;
       transition: background 0.5s;
+      position: relative;
     }
     header {
       text-align: center;
@@ -27,6 +28,59 @@
     header p {
       font-size: 1.1em;
       color: #333;
+    }
+    /* Botón de customización */
+    #customBtn {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background-color: #FF4081;
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'Luckiest Guy', cursive;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    #customBtn:hover {
+      background-color: #E91E63;
+    }
+    /* Modal Customización */
+    .modal {
+      display: none; /* Oculto por defecto */
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 400px;
+      border-radius: 10px;
+      font-family: 'Comic Neue', sans-serif;
+    }
+    .modal-content h2 {
+      margin-top: 0;
+      color: #FF4081;
+      font-family: 'Luckiest Guy', cursive;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close:hover, .close:focus {
+      color: #000;
+      text-decoration: none;
     }
     /* Personaje */
     #character {
@@ -79,12 +133,12 @@
       color: #444;
       display: none;
     }
-    /* Contenedor de test */
+    /* Contenedor del test */
     #testContainer {
       max-width: 800px;
       margin: 0 auto;
     }
-    /* Lista de preguntas (única columna, con buena separación) */
+    /* Lista de preguntas (única columna, separadas) */
     ul.question-list {
       list-style: none;
       padding: 0;
@@ -168,8 +222,8 @@
       height: auto;
       display: none;
     }
-    /* Mensaje para screenshot */
-    #screenshotMsg {
+    /* Mensajes de explicación y final */
+    #screenshotMsg, #resultExplanation, #finalMsg {
       max-width: 500px;
       margin: 15px auto;
       font-size: 0.9em;
@@ -199,8 +253,22 @@
 <body>
   <header>
     <h1>Test de Experiencias</h1>
-    <p>Responde <strong>Sí</strong> o <strong>No</strong> a cada pregunta sobre tu vivencia en distintos ámbitos. Tu resultado mostrará cómo han impactado estas experiencias en tu vida digna y feliz.</p>
+    <p>Responde <strong>Sí</strong> o <strong>No</strong> a cada pregunta sobre tus vivencias en distintos ámbitos y cómo han afectado tu derecho a una vida digna.</p>
+    <button id="customBtn">Personalizar Fondo</button>
   </header>
+
+  <!-- Modal de Customización -->
+  <div id="customModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Personalización de Fondo</h2>
+      <p><strong>Fondo Actual:</strong> <span id="currentFondo"></span></p>
+      <p><strong>Opciones de Fondo:</strong></p>
+      <ul id="fondoList"></ul>
+      <p><strong>Preguntas por Categoría (Límite):</strong></p>
+      <ul id="limitList"></ul>
+    </div>
+  </div>
 
   <!-- Personaje aleatorio -->
   <div id="character">
@@ -227,6 +295,8 @@
     <canvas id="resultChart"></canvas>
   </div>
   <div id="screenshotMsg"></div>
+  <div id="resultExplanation"></div>
+  <div id="finalMsg"></div>
 
   <footer>
     &copy; 2025 Test de Experiencias. ¡Vive, siente y conoce tus derechos!
@@ -491,62 +561,73 @@
     });
 
     /********** PERSONAJE ALEATORIO **********/
+    // Se ha actualizado cada objeto para incluir "nombre"
     const personajes = [
       {
+        nombre: "Ana",
         skin: "#FCD7B8", bodyColor: "#8BC34A",
         extra1: { type: "hair", width: "60px", height: "30px", top: "-5px", background: "#8B4513", borderRadius: "50%" },
         mouthStyle: "smile",
         story: "¡Hola! Soy Ana, defensora de la igualdad y el acceso a la cultura."
       },
       {
+        nombre: "Beto",
         skin: "#8D5524", bodyColor: "#FF9800",
         extra1: null,
         mouthStyle: "neutral",
         story: "Soy Beto. Curioso y persistente, siempre en búsqueda de justicia en el trabajo."
       },
       {
+        nombre: "Carlos",
         skin: "#C68642", bodyColor: "#03A9F4",
         extra1: { type: "hair", width: "60px", height: "20px", top: "0px", background: "#BBB", borderRadius: "0 0 50% 50%" },
         mouthStyle: "smile",
         story: "Me llamo Carlos, profesor jubilado y defensor del derecho a una vida digna."
       },
       {
+        nombre: "Dalia",
         skin: "#F1C27D", bodyColor: "#FFC107",
         extra1: { type: "hair", width: "70px", height: "70px", top: "-5px", background: "#367C94", borderRadius: "50%" },
         mouthStyle: "neutral",
         story: "Soy Dalia, ingeniera y lucho por que se respeten las costumbres y creencias de todos."
       },
       {
+        nombre: "Ema",
         skin: "#FFDBAC", bodyColor: "#9C27B0",
         extra1: { type: "hat", width: "50px", height: "20px", top: "-10px", background: "#000", borderRadius: "5px" },
         mouthStyle: "smile",
         story: "¡Hey! Soy Ema, siempre con mi gorra de la suerte, comprometida con la justicia social."
       },
       {
+        nombre: "Flor",
         skin: "#FFD1DC", bodyColor: "#00BCD4",
         extra1: { type: "hair", width: "60px", height: "30px", top: "-5px", background: "#E91E63", borderRadius: "50%" },
         mouthStyle: "smile",
         story: "Soy Flor, mi cabello rosa refleja mi lucha por la igualdad en salud y educación."
       },
       {
+        nombre: "Guille",
         skin: "#FFE0BD", bodyColor: "#FF5722",
         extra1: { type: "glasses", top: "18px" },
         mouthStyle: "smile",
         story: "Hola, soy Guille. Con mis gafas siempre listas, defiendo el derecho a la información."
       },
       {
+        nombre: "Hiro",
         skin: "#F1C27D", bodyColor: "#4CAF50",
         extra1: { type: "hair", width: "50px", height: "50px", top: "0px", background: "#000", borderRadius: "50%" },
         mouthStyle: "neutral",
         story: "Me llamo Hiro, programador y amante de la tecnología, lucho por un acceso digital justo."
       },
       {
+        nombre: "Iris",
         skin: "#8D5524", bodyColor: "#795548",
         extra1: { type: "hair", width: "0", height: "0", borderLeft: "15px solid transparent", borderRight: "15px solid transparent", borderBottom: "30px solid #FFEB3B", top: "-15px", left: "50%", marginLeft: "-15px" },
         mouthStyle: "smile",
         story: "Soy Iris. Con mi silla de ruedas, demuestro que la movilidad es un derecho para todos."
       },
       {
+        nombre: "José",
         skin: "#C68642", bodyColor: "#FF5722",
         extra1: { type: "hair", width: "60px", height: "40px", top: "-10px", background: "#2F4F4F", borderRadius: "50%" },
         mouthStyle: "frown",
@@ -612,7 +693,7 @@
       charStoryEl.style.display = (charStoryEl.style.display === "none" || !charStoryEl.style.display) ? "block" : "none";
     });
 
-    /********** FONDO ALEATORIO **********/
+    /********** FONDO ALEATORIO Y DECORACIONES **********/
     const fondos = [
       "linear-gradient(135deg, #f3e5f5, #e1bee7)",
       "linear-gradient(135deg, #FFCDD2, #F8BBD0)",
@@ -620,12 +701,47 @@
       "linear-gradient(135deg, #BBDEFB, #90CAF9)",
       "linear-gradient(135deg, #FFF9C4, #FFF59D)"
     ];
-    document.body.style.background = fondos[Math.floor(Math.random() * fondos.length)];
+    const fondoSeleccionado = fondos[Math.floor(Math.random() * fondos.length)];
+    document.body.style.background = fondoSeleccionado;
+
+    /********** POPUP DE CUSTOMIZACIÓN **********/
+    const customBtn = document.getElementById("customBtn");
+    const customModal = document.getElementById("customModal");
+    const closeModal = document.querySelector(".modal .close");
+    customBtn.addEventListener("click", () => {
+      // Llenar datos en el modal
+      document.getElementById("currentFondo").textContent = fondoSeleccionado;
+      const fondoList = document.getElementById("fondoList");
+      fondoList.innerHTML = "";
+      fondos.forEach(f => {
+        const li = document.createElement("li");
+        li.textContent = f;
+        fondoList.appendChild(li);
+      });
+      const limitList = document.getElementById("limitList");
+      limitList.innerHTML = "";
+      for (const key in questionsLimit) {
+        const li = document.createElement("li");
+        li.textContent = key + ": " + (questionsLimit[key] === null ? "Todas" : questionsLimit[key]);
+        limitList.appendChild(li);
+      }
+      customModal.style.display = "block";
+    });
+    closeModal.addEventListener("click", () => {
+      customModal.style.display = "none";
+    });
+    window.addEventListener("click", (event) => {
+      if (event.target == customModal) {
+        customModal.style.display = "none";
+      }
+    });
 
     /********** BOTÓN DE RESULTADOS Y GRÁFICO **********/
     const submitBtn = document.getElementById("submitBtn");
     const resultChartEl = document.getElementById("resultChart");
     const screenshotMsgEl = document.getElementById("screenshotMsg");
+    const resultExplanationEl = document.getElementById("resultExplanation");
+    const finalMsgEl = document.getElementById("finalMsg");
     let radarChart;
 
     submitBtn.addEventListener("click", () => {
@@ -713,6 +829,26 @@
       }
       screenshotMsgEl.innerHTML = instrucciones;
       screenshotMsgEl.style.display = "block";
+
+      // Generar una pequeña explicación basada en los resultados
+      let totalYes = datos.reduce((a, b) => a + b, 0);
+      let explanation = "";
+      if (totalYes === 0) {
+        explanation = "Tus respuestas indican que, en general, no has enfrentado barreras discriminatorias en estos ámbitos. ¡Felicidades!";
+      } else {
+        // Encontrar la categoría con mayor "Sí"
+        let maxVal = Math.max(...datos);
+        let maxIndex = datos.indexOf(maxVal);
+        let categoriaMax = etiquetas[maxIndex];
+        explanation = "Tus respuestas muestran que has experimentado mayores dificultades en el área de <strong>" + categoriaMax + "</strong> (" + maxVal + " afirmativas). Revisa el gráfico para más detalles.";
+      }
+      resultExplanationEl.innerHTML = explanation;
+      resultExplanationEl.style.display = "block";
+
+      // Mensaje final
+      finalMsgEl.textContent = "Test realizado con la supervisión de Dr. Igualdad y el personaje " + personaje.nombre + ".";
+      finalMsgEl.style.display = "block";
+
       resultChartEl.scrollIntoView({ behavior: "smooth" });
     });
 
