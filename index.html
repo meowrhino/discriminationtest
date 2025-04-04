@@ -13,7 +13,6 @@
       padding: 20px;
       font-family: 'Comic Neue', sans-serif;
       transition: background 0.5s;
-      position: relative;
     }
     header {
       text-align: center;
@@ -28,59 +27,6 @@
     header p {
       font-size: 1.1em;
       color: #333;
-    }
-    /* Botón de customización */
-    #customBtn {
-      margin-top: 10px;
-      padding: 8px 16px;
-      background-color: #FF4081;
-      border: none;
-      border-radius: 6px;
-      color: #fff;
-      font-family: 'Luckiest Guy', cursive;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    #customBtn:hover {
-      background-color: #E91E63;
-    }
-    /* Modal Customización */
-    .modal {
-      display: none; /* Oculto por defecto */
-      position: fixed;
-      z-index: 10;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.4);
-    }
-    .modal-content {
-      background-color: #fff;
-      margin: 15% auto;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 80%;
-      max-width: 400px;
-      border-radius: 10px;
-      font-family: 'Comic Neue', sans-serif;
-    }
-    .modal-content h2 {
-      margin-top: 0;
-      color: #FF4081;
-      font-family: 'Luckiest Guy', cursive;
-    }
-    .close {
-      color: #aaa;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .close:hover, .close:focus {
-      color: #000;
-      text-decoration: none;
     }
     /* Personaje */
     #character {
@@ -133,12 +79,12 @@
       color: #444;
       display: none;
     }
-    /* Contenedor del test */
+    /* Contenedor de test */
     #testContainer {
       max-width: 800px;
       margin: 0 auto;
     }
-    /* Lista de preguntas (única columna, separadas) */
+    /* Lista de preguntas (única columna, con buena separación) */
     ul.question-list {
       list-style: none;
       padding: 0;
@@ -222,8 +168,8 @@
       height: auto;
       display: none;
     }
-    /* Mensajes de explicación y final */
-    #screenshotMsg, #resultExplanation, #finalMsg {
+    /* Mensaje para screenshot */
+    #screenshotMsg {
       max-width: 500px;
       margin: 15px auto;
       font-size: 0.9em;
@@ -253,22 +199,8 @@
 <body>
   <header>
     <h1>Test de Experiencias</h1>
-    <p>Responde <strong>Sí</strong> o <strong>No</strong> a cada pregunta sobre tus vivencias en distintos ámbitos y cómo han afectado tu derecho a una vida digna.</p>
-    <button id="customBtn">Personalizar Fondo</button>
+    <p>Responde <strong>Sí</strong> o <strong>No</strong> a cada pregunta sobre tu vivencia en distintos ámbitos. Tu resultado mostrará cómo han impactado estas experiencias en tu vida digna y feliz.</p>
   </header>
-
-  <!-- Modal de Customización -->
-  <div id="customModal" class="modal">
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2>Personalización de Fondo</h2>
-      <p><strong>Fondo Actual:</strong> <span id="currentFondo"></span></p>
-      <p><strong>Opciones de Fondo:</strong></p>
-      <ul id="fondoList"></ul>
-      <p><strong>Preguntas por Categoría (Límite):</strong></p>
-      <ul id="limitList"></ul>
-    </div>
-  </div>
 
   <!-- Personaje aleatorio -->
   <div id="character">
@@ -295,8 +227,6 @@
     <canvas id="resultChart"></canvas>
   </div>
   <div id="screenshotMsg"></div>
-  <div id="resultExplanation"></div>
-  <div id="finalMsg"></div>
 
   <footer>
     &copy; 2025 Test de Experiencias. ¡Vive, siente y conoce tus derechos!
@@ -306,7 +236,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     /********** CONFIGURACIÓN **********/
-    // Para limitar el número de preguntas por categoría (null = todas)
+    // Si deseas limitar el número de preguntas por categoría, define un número; si es null se muestran todas.
     const questionsLimit = {
       racial: null,
       genero: null,
@@ -322,172 +252,174 @@
       { texto: "¿Alguna vez te han negado la posibilidad de alquilar o comprar una vivienda por tu color de piel u origen étnico?", categoria: "racial" },
       { texto: "¿Te han rechazado en un empleo o ascenso por motivos relacionados con tu raza u origen étnico, a pesar de estar calificado/a?", categoria: "racial" },
       { texto: "¿Has sentido que recibías un salario más bajo o peores condiciones laborales que colegas con las mismas funciones por tu origen racial o étnico?", categoria: "racial" },
-      { texto: "¿Algún compañero, cliente o jefe te ha hecho comentarios racistas o despectivos sobre tu origen en el ámbito laboral?", categoria: "racial" },
+      { texto: "¿Algún compañero de trabajo, cliente o jefe te ha hecho comentarios racistas o despectivos sobre tu origen en el ámbito laboral?", categoria: "racial" },
       { texto: "En la escuela o universidad, ¿sufriste trato injusto, burlas o menor atención de profesores por tu pertenencia racial o étnica?", categoria: "racial" },
-      { texto: "¿Te han negado la entrada a un local, restaurante o club debido a tu raza, color de piel o aspecto étnico?", categoria: "racial" },
-      { texto: "¿Has notado que te vigilan en tiendas solo por tu apariencia racial o étnica, asumiendo que podrías robar?", categoria: "racial" },
-      { texto: "¿Te ha detenido o interrogado la policía sin motivo, basándose únicamente en tu color de piel o rasgos étnicos?", categoria: "racial" },
-      { texto: "¿Has recibido insultos o agresiones físicas de desconocidos por motivos raciales?", categoria: "racial" },
-      { texto: "¿Te has sentido inseguro/a en espacios públicos debido a incidentes racistas previos o un ambiente hostil hacia tu origen?", categoria: "racial" },
-      { texto: "¿Algún profesional de la salud ha minimizado tus síntomas por prejuicios relacionados con tu raza u origen étnico?", categoria: "racial" },
-      { texto: "¿Has sentido la necesidad de modificar tu forma de hablar, vestir o comportarte para evitar estereotipos relacionados con tu grupo étnico?", categoria: "racial" },
-      { texto: "¿Te han presionado a renunciar a prácticas culturales (como tu idioma o costumbres) para ser aceptado/a en la sociedad mayoritaria?", categoria: "racial" },
-      { texto: "¿Te han dicho frases como '¡Regresa a tu país!' u otros comentarios despectivos solo por tu apariencia?", categoria: "racial" },
-      { texto: "¿Te han impedido el ingreso a algún evento o espacio comunitario por no ser de la etnia mayoritaria?", categoria: "racial" },
-      { texto: "¿Has perdido oportunidades profesionales o académicas al preferir a personas de otro origen, aun estando tú calificado/a?", categoria: "racial" },
-      { texto: "¿Te has sentido aislado/a o excluido/a en reuniones sociales o vecindarios por tu origen racial?", categoria: "racial" },
-      { texto: "Al solicitar servicios públicos, ¿has notado un trato de desconfianza o lentitud por tu origen étnico?", categoria: "racial" },
-      { texto: "¿Has sido objeto de caricaturas o chistes ofensivos en medios o redes sociales por tu raza u origen?", categoria: "racial" },
-      { texto: "¿Has sufrido acoso en redes sociales con insultos racistas dirigidos hacia ti?", categoria: "racial" }
+      { texto: "¿Te han negado la entrada a un local, restaurante, club u otro espacio de ocio debido a tu raza, color de piel o aspecto étnico?", categoria: "racial" },
+      { texto: "¿Has notado que personal de seguridad o empleados te siguen o vigilan en tiendas solo por tu apariencia racial o étnica, asumiendo que podrías robar?", categoria: "racial" },
+      { texto: "¿Te ha detenido o interrogado la policía sin razón aparente, sospechando de ti únicamente por tu color de piel o rasgos étnicos?", categoria: "racial" },
+      { texto: "¿Has recibido insultos, ofensas verbales o incluso agresiones físicas por parte de desconocidos que te atacaron por motivos racistas?", categoria: "racial" },
+      { texto: "¿Te has sentido inseguro/a o con miedo de transitar por ciertas zonas o espacios públicos debido a incidentes racistas previos o al ambiente hostil hacia personas de tu origen?", categoria: "racial" },
+      { texto: "¿Algún profesional de la salud ha minimizado tus síntomas o te ha dado un trato inferior por prejuicios relacionados con tu raza u origen étnico?", categoria: "racial" },
+      { texto: "¿Has sentido que debes modificar tu forma de hablar, vestir o comportarte en público para evitar estereotipos o tratos discriminatorios hacia tu grupo étnico?", categoria: "racial" },
+      { texto: "¿Te has sentido presionado/a a renunciar a prácticas culturales (como tu idioma, vestimenta tradicional o costumbres) para ser aceptado/a en la sociedad mayoritaria?", categoria: "racial" },
+      { texto: "¿Alguna vez te han dicho frases como '¡Regresa a tu país!' u otros comentarios despectivos, pese a que seas de ese lugar, solo por tu apariencia o apellido?", categoria: "racial" },
+      { texto: "¿Te han impedido o dificultado el ingreso a algún evento, institución o espacio comunitario por no ser de la etnia o grupo racial mayoritario?", categoria: "racial" },
+      { texto: "¿Has perdido oportunidades profesionales o académicas porque se dio preferencia a personas de otro origen étnico, aun estando tú igualmente calificado/a?", categoria: "racial" },
+      { texto: "¿Te has sentido aislado/a o excluido/a en reuniones sociales, vecindarios u otras comunidades por tu origen étnico o color de piel?", categoria: "racial" },
+      { texto: "Al realizar trámites o solicitar servicios públicos, ¿has percibido que te trataban con desconfianza o lentitud deliberada por tu origen racial o étnico?", categoria: "racial" },
+      { texto: "¿Has sido objeto de caricaturas, chistes ofensivos o representaciones estereotipadas en medios o redes sociales por tu raza u origen, haciéndote sentir humillado/a?", categoria: "racial" },
+      { texto: "¿Has sufrido acoso o ataques en redes sociales u otras plataformas digitales con insultos racistas dirigidos hacia ti?", categoria: "racial" }
     ];
 
     const preguntasGenero = [
-      { texto: "¿Alguna vez te han pagado menos que a colegas del otro género por el mismo trabajo, solo por tu género?", categoria: "genero" },
-      { texto: "¿Te han descartado para un empleo o ascenso por ser mujer, por asumir que podrías tener responsabilidades familiares?", categoria: "genero" },
-      { texto: "¿En una entrevista laboral te han preguntado si planeas tener hijos, sugiriendo que afectará tu desempeño?", categoria: "genero" },
-      { texto: "En tu trabajo, ¿se minimizan tus ideas o te interrumpen por ser mujer, especialmente en entornos dominados por hombres?", categoria: "genero" },
-      { texto: "¿Alguna vez has sido acosada sexualmente o has recibido comentarios sexuales no deseados en el ámbito laboral?", categoria: "genero" },
-      { texto: "¿Has evitado ciertos estudios o posiciones de liderazgo por el mensaje de que 'no son para mujeres'?", categoria: "genero" },
-      { texto: "¿Te han calificado de 'mandona' o 'agresiva' por expresar opiniones firmes, mientras que a un hombre no se le critica lo mismo?", categoria: "genero" },
-      { texto: "¿Te han negado un servicio médico relacionado con tu salud reproductiva, limitando tu autonomía sobre tu cuerpo?", categoria: "genero" },
-      { texto: "¿Algún profesional de la salud ha atribuido tu dolor o síntomas a 'cosas de mujeres' en lugar de evaluarte seriamente?", categoria: "genero" },
-      { texto: "¿Has sentido miedo de transitar sola por la noche debido al riesgo de acoso o violencia de género?", categoria: "genero" },
-      { texto: "Si sufriste acoso o violencia, ¿te han culpado a ti por 'cómo te vestías o comportabas' en lugar de responsabilizar al agresor?", categoria: "genero" },
-      { texto: "¿Te han presionado a vestir de cierta manera o limitar tu expresión personal por estereotipos de género?", categoria: "genero" },
-      { texto: "En entornos de capacitación, ¿te han dado menos oportunidades en tareas técnicas o científicas por ser mujer?", categoria: "genero" },
-      { texto: "¿En trámites legales te han insinuado que necesitas la aprobación de un hombre para tomar decisiones?", categoria: "genero" },
-      { texto: "¿Te han obligado a asumir la mayor parte de las tareas domésticas o de cuidado familiar, aun trabajando fuera?", categoria: "genero" },
-      { texto: "¿Alguna vez te han dicho que 'los hombres no lloran' o se te ha criticado por mostrar emociones?", categoria: "genero" },
-      { texto: "¿En el trabajo, ¿te han desanimado de tomar licencia por paternidad/maternidad, insinuando que es 'cosa de mujeres'?", categoria: "genero" },
-      { texto: "¿Has ocultado tu orientación sexual o identidad de género en ambientes laborales o familiares por miedo a represalias?", categoria: "genero" },
+      { texto: "¿Alguna vez te han pagado menos que a colegas del otro género por el mismo trabajo, solo debido a tu género?", categoria: "genero" },
+      { texto: "¿Te han descartado para un empleo o ascenso, insinuando que, por ser mujer, estarías menos comprometida (por ejemplo, asumiendo que podrías quedar embarazada o tener responsabilidades de cuidado)?", categoria: "genero" },
+      { texto: "¿En una entrevista laboral te han preguntado si piensas tener hijos, dando a entender que eso afectaría tu contratación por ser mujer?", categoria: "genero" },
+      { texto: "En tu trabajo, ¿no toman en serio tus ideas o te interrumpen con frecuencia por ser mujer, especialmente en entornos dominados por hombres?", categoria: "genero" },
+      { texto: "¿Alguna vez te han acosado sexualmente o hecho comentarios sexuales no deseados en tu trabajo u otro espacio público por el hecho de ser mujer?", categoria: "genero" },
+      { texto: "¿Has evitado ciertos estudios, trabajos o posiciones de liderazgo porque desde niña recibiste el mensaje de que 'no eran para mujeres'?", categoria: "genero" },
+      { texto: "¿Te han calificado de 'mandona' o 'agresiva' por asumir un rol de liderazgo o expresar opiniones firmes, cuando a un hombre no lo criticarían por lo mismo?", categoria: "genero" },
+      { texto: "¿Te han negado un servicio médico o información sobre tu salud reproductiva (por ejemplo, anticoncepción o aborto) por ser mujer, limitando tu autonomía sobre tu cuerpo?", categoria: "genero" },
+      { texto: "¿Algún profesional de la salud ha minimizado tu dolor o síntomas atribuyéndolos a 'cosas de mujeres' en lugar de tratarte seriamente?", categoria: "genero" },
+      { texto: "¿Has sentido miedo de caminar sola de noche o de estar en ciertos lugares porque temes acoso o violencia de género por el hecho de ser mujer?", categoria: "genero" },
+      { texto: "Si sufriste acoso o violencia, ¿te han culpado o avergonzado insinuando que fue 'por cómo ibas vestida o te comportaste' en lugar de responsabilizar al agresor?", categoria: "genero" },
+      { texto: "¿Te han presionado a vestir de cierta manera, a 'comportarte con más recato' o a limitar tu expresión personal porque 'una mujer debe ser así'?", categoria: "genero" },
+      { texto: "En entornos académicos o de capacitación, ¿has notado que te dan menos oportunidades en tareas técnicas o científicas por ser mujer, asumiendo que los hombres lo hacen mejor?", categoria: "genero" },
+      { texto: "¿En trámites financieros o legales te han insinuado que necesitas la presencia o aprobación de un hombre para tomar decisiones, solo por ser mujer?", categoria: "genero" },
+      { texto: "¿Te has sentido obligada a asumir la mayor parte de las tareas domésticas o de cuidado familiar, incluso trabajando fuera, simplemente por ser mujer?", categoria: "genero" },
+      { texto: "¿Te han ridiculizado o cuestionado por elegir una carrera u ocupación considerada 'femenina' por el hecho de ser hombre?", categoria: "genero" },
+      { texto: "¿Alguna vez te han dicho que 'los hombres no lloran' o te han criticado por mostrar emociones o vulnerabilidad, haciendo que sientas que por tu género no puedes expresar tus sentimientos libremente?", categoria: "genero" },
+      { texto: "En tu trabajo, ¿te han desanimado de tomar licencia por paternidad o tiempo para cuidados familiares, insinuando que esas tareas son 'cosa de mujeres'?", categoria: "genero" },
+      { texto: "¿Has ocultado o mentido sobre tu orientación sexual o identidad de género en tu trabajo, escuela o familia por miedo a repercusiones negativas?", categoria: "genero" },
       { texto: "¿Te han negado el acceso a servicios o te han rechazado como cliente por tu orientación sexual o identidad de género?", categoria: "genero" },
-      { texto: "¿En espacios públicos te han agredido o insultado por mostrar afecto con tu pareja del mismo sexo?", categoria: "genero" },
-      { texto: "¿Has sido objeto de amenazas o violencia física por ser LGBT+?", categoria: "genero" },
-      { texto: "¿Te han sugerido que ocultes o 'cambies' tu orientación sexual o identidad para ser aceptado/a?", categoria: "genero" },
-      { texto: "¿Alguna institución religiosa te ha rechazado o expulsado por tu orientación sexual o identidad de género?", categoria: "genero" },
-      { texto: "¿Sientes que las leyes de tu país te impiden vivir plenamente por tu orientación sexual o identidad de género?", categoria: "genero" },
-      { texto: "¿Te han negado la entrada a baños públicos o vestuarios por no encajar en las expectativas de género?", categoria: "genero" },
-      { texto: "¿Alguna vez te han tratado como si estuvieras 'enfermo/a' o te ofrecieron alguna 'cura' por tu orientación o identidad?", categoria: "genero" },
-      { texto: "¿Has perdido amistades o apoyo al revelar tu orientación sexual o identidad de género debido a prejuicios?", categoria: "genero" }
+      { texto: "¿En un lugar público te han insultado o agredido por expresar afecto con tu pareja del mismo sexo?", categoria: "genero" },
+      { texto: "¿Has sido objeto de amenazas, violencia física o ataques de odio por ser una persona LGBT+?", categoria: "genero" },
+      { texto: "¿Te han dicho o sugerido que ocultes o 'cambies' tu orientación sexual o identidad de género para ser aceptado/a en tu familia, trabajo o comunidad?", categoria: "genero" },
+      { texto: "¿Alguna institución religiosa te ha rechazado, expulsado o exigido que cambies debido a tu orientación sexual o identidad de género?", categoria: "genero" },
+      { texto: "¿Sientes que las leyes o políticas de tu país te impiden vivir plenamente tu vida por tu orientación sexual o identidad de género?", categoria: "genero" },
+      { texto: "¿Te han negado la entrada o te han discriminado en baños públicos o vestuarios por ser trans o no encajar en las expectativas de género?", categoria: "genero" },
+      { texto: "¿Alguna vez te han tratado como si estuvieras 'enfermo/a' o te han ofrecido alguna 'cura' simplemente por tu orientación sexual o identidad de género?", categoria: "genero" },
+      { texto: "¿Has perdido o temido perder amistades o apoyo al revelar tu orientación sexual o identidad de género debido a prejuicios?", categoria: "genero" }
     ];
 
     const preguntasReligiosa = [
-      { texto: "¿Alguna vez te han insultado o agredido por practicar tu religión o por la forma en que vistes tus símbolos religiosos?", categoria: "religiosa" },
-      { texto: "¿Te han negado un empleo o ascenso, o incluso despedido, por tus creencias religiosas?", categoria: "religiosa" },
-      { texto: "¿Alguna institución se ha negado a hacer ajustes para que practiques tu religión (como permitir días festivos o dietas especiales)?", categoria: "religiosa" },
-      { texto: "¿Has sentido que debes ocultar tus creencias en el trabajo o la escuela para evitar burlas o trato desfavorable?", categoria: "religiosa" },
-      { texto: "¿Te han prohibido llevar indumentaria o símbolos religiosos en espacios públicos o laborales?", categoria: "religiosa" },
-      { texto: "En la escuela, ¿sufriste exclusión o burlas por pertenecer a una minoría religiosa?", categoria: "religiosa" },
-      { texto: "¿Te han dificultado alquilar o comprar una vivienda al saber de tu religión (por decoraciones o apellidos)?", categoria: "religiosa" },
-      { texto: "¿Has tenido dificultades para recibir atención de salud o justicia por prejuicios contra tu religión?", categoria: "religiosa" },
-      { texto: "¿Alguna vez te han culpado de un evento negativo solo por compartir la misma religión que el autor?", categoria: "religiosa" },
-      { texto: "¿Te han excluido o tratado con recelo en tu comunidad local por practicar una religión minoritaria?", categoria: "religiosa" },
-      { texto: "¿Han vandalizado o profanado objetos o lugares importantes para tu práctica religiosa?", categoria: "religiosa" },
-      { texto: "¿Has evitado realizar prácticas religiosas en público por temor a reacciones hostiles?", categoria: "religiosa" },
-      { texto: "¿Has sentido la necesidad de cambiar u ocultar tu nombre para evitar discriminación por tu religión?", categoria: "religiosa" },
-      { texto: "¿Alguna escuela se negó a inscribir a tu hijo/a o no hizo adaptaciones por tu religión?", categoria: "religiosa" },
-      { texto: "¿Te han impedido participar plenamente en ceremonias cívicas por tu religión?", categoria: "religiosa" },
+      { texto: "¿Alguna vez te han insultado, ridiculizado o agredido por practicar tu religión o por la forma en que vistes debido a tus creencias?", categoria: "religiosa" },
+      { texto: "¿Te han negado un empleo o ascenso, o te han despedido, por tu religión (por ejemplo, por necesitar usar símbolos religiosos o ajustar tus horarios)?", categoria: "religiosa" },
+      { texto: "¿Algún empleador o institución educativa se ha negado a hacer ajustes necesarios para que practiques tu religión (como permitir días festivos o dietas especiales)?", categoria: "religiosa" },
+      { texto: "¿Has sentido que debes ocultar o minimizar tus creencias religiosas en el trabajo o la escuela para evitar burlas o trato desfavorable?", categoria: "religiosa" },
+      { texto: "¿Te han prohibido llevar indumentaria o símbolos religiosos en algún espacio público, escuela o trabajo?", categoria: "religiosa" },
+      { texto: "En la escuela, ¿sufriste burlas o exclusión por pertenecer a una minoría religiosa o por tener creencias diferentes a la mayoría?", categoria: "religiosa" },
+      { texto: "¿Te han dificultado alquilar o comprar una vivienda al enterarse de tu religión (por ejemplo, por decoraciones o apellidos asociados a cierta fe)?", categoria: "religiosa" },
+      { texto: "¿Has tenido dificultades para recibir atención de salud, justicia u otros servicios públicos por prejuicios contra tu religión?", categoria: "religiosa" },
+      { texto: "¿Alguna vez te han culpado o mirado con desconfianza tras algún evento negativo solo por compartir la misma religión que quien lo cometió?", categoria: "religiosa" },
+      { texto: "¿Has sido excluido/a o tratado/a con recelo en tu vecindario o comunidad local por practicar una religión minoritaria?", categoria: "religiosa" },
+      { texto: "¿Han vandalizado o profanado objetos, símbolos o lugares importantes de tu práctica religiosa?", categoria: "religiosa" },
+      { texto: "¿Has evitado realizar prácticas religiosas en público por temor a reacciones hostiles o desaprobación?", categoria: "religiosa" },
+      { texto: "¿Has sentido la necesidad de cambiar o ocultar tu nombre o apellido para evitar discriminación por tu religión?", categoria: "religiosa" },
+      { texto: "¿Alguna escuela se negó a inscribir a tu hijo/a o no hizo adaptaciones necesarias por tu religión?", categoria: "religiosa" },
+      { texto: "¿Te han impedido participar plenamente en ceremonias cívicas o públicas por tu religión?", categoria: "religiosa" },
       { texto: "¿Te han presionado a renunciar a tu fe o cambiar de credo bajo amenazas sociales o legales?", categoria: "religiosa" },
-      { texto: "¿Te has sentido discriminado/a por ser ateo/agnóstico en un entorno mayoritariamente religioso?", categoria: "religiosa" }
+      { texto: "¿Te has sentido discriminado/a por ser ateo/a o agnóstico/a en un entorno mayoritariamente religioso?", categoria: "religiosa" }
     ];
 
     const preguntasCapacitista = [
-      { texto: "¿Alguna vez te han negado un empleo o ascenso tras saber de tu discapacidad, aun cuando estabas capacitado/a?", categoria: "capacitista" },
-      { texto: "En el trabajo, ¿has sentido que te asignan tareas por debajo de tus capacidades debido a tu discapacidad?", categoria: "capacitista" },
-      { texto: "¿Algún compañero o jefe ha hecho chistes o comentarios despectivos sobre tu discapacidad?", categoria: "capacitista" },
-      { texto: "¿Te han rechazado al intentar alquilar una vivienda o te han puesto trabas excesivas por tener una discapacidad?", categoria: "capacitista" },
-      { texto: "¿Has tenido que renunciar a usar transporte público o taxis por no estar adaptados a tus necesidades?", categoria: "capacitista" },
-      { texto: "¿Te han negado la entrada a un local o cine por ir acompañado/a de tu ayuda técnica (por ejemplo, un perro guía)?", categoria: "capacitista" },
-      { texto: "¿Has descubierto que un edificio público o privado esencial no es accesible para ti?", categoria: "capacitista" },
+      { texto: "¿Alguna vez te han negado un empleo o ascenso tras saber de tu discapacidad, a pesar de estar capacitado/a?", categoria: "capacitista" },
+      { texto: "En el trabajo, ¿has sentido que te asignaban tareas por debajo de tus habilidades o que no tomaban en serio tus ideas por tener una discapacidad?", categoria: "capacitista" },
+      { texto: "¿Algún empleador o compañero ha hecho comentarios despectivos o chistes sobre tu discapacidad en tu presencia?", categoria: "capacitista" },
+      { texto: "¿Te han rechazado al intentar alquilar una vivienda o te han puesto trabas excesivas al saber que tienes alguna discapacidad?", categoria: "capacitista" },
+      { texto: "¿Has tenido que renunciar a usar transporte público o taxis por no estar adaptados a tu discapacidad?", categoria: "capacitista" },
+      { texto: "¿Te han negado la entrada a un local, restaurante o cine por ir acompañado/a de tu ayuda técnica (por ejemplo, perro guía)?", categoria: "capacitista" },
+      { texto: "¿Has descubierto que un edificio público o privado esencial (escuela, oficina, hospital) no es accesible para ti?", categoria: "capacitista" },
       { texto: "¿Algún profesional de la salud ha atribuido todos tus problemas a tu discapacidad sin evaluarte adecuadamente?", categoria: "capacitista" },
-      { texto: "En tu época escolar, ¿te excluyeron de actividades o excursiones por tener una discapacidad?", categoria: "capacitista" },
-      { texto: "¿Te han aislado o separado de otros estudiantes en la escuela solo por tu discapacidad?", categoria: "capacitista" },
-      { texto: "¿Has sido víctima de burlas o acoso en la escuela, trabajo o comunidad por tu discapacidad?", categoria: "capacitista" },
-      { texto: "¿Has evitado buscar atención médica por experiencias previas de trato inadecuado relacionado con tu discapacidad?", categoria: "capacitista" },
-      { texto: "¿Te han hablado como si fueras un/a niño/a por tener una discapacidad, minimizando tus capacidades?", categoria: "capacitista" },
-      { texto: "¿Alguna persona o institución ha tomado decisiones por ti sin consultarte, asumiendo que no puedes decidir por ti mismo/a?", categoria: "capacitista" },
+      { texto: "En tu época de estudiante, ¿te excluyeron de actividades escolares o excursiones por tu discapacidad?", categoria: "capacitista" },
+      { texto: "¿Te han aislado o separado de otros estudiantes en la escuela únicamente por tu discapacidad?", categoria: "capacitista" },
+      { texto: "¿Has sido víctima de burlas, apodos crueles o acoso debido a tu discapacidad en la escuela, el trabajo o la comunidad?", categoria: "capacitista" },
+      { texto: "¿Has evitado buscar atención médica o realizar trámites por malas experiencias previas de trato por tu discapacidad?", categoria: "capacitista" },
+      { texto: "¿Te han hablado como si fueras un/a niño/a o menos capaz solo por tener una discapacidad (infantilización)?", categoria: "capacitista" },
+      { texto: "¿Alguna persona o institución ha tomado decisiones por ti sin consultarte, por considerarte incapaz por tu discapacidad?", categoria: "capacitista" },
       { texto: "¿Se te ha impedido formar una familia o te han quitado la custodia de tus hijos por suposiciones sobre tu discapacidad?", categoria: "capacitista" },
-      { texto: "¿Has sentido la necesidad de ocultar o minimizar tu discapacidad para ser tratado/a como 'normal'?", categoria: "capacitista" },
-      { texto: "¿Te han negado un seguro médico o te han cobrado tarifas muy altas por tener una discapacidad?", categoria: "capacitista" },
-      { texto: "¿Alguna autoridad te ha tratado con fuerza excesiva o te ha detenido injustificadamente por no entender tu discapacidad?", categoria: "capacitista" },
-      { texto: "¿Has encontrado barreras para ejercer tus derechos cívicos (como votar) por la falta de adaptaciones en el lugar?", categoria: "capacitista" },
+      { texto: "¿Has sentido la necesidad de ocultar o minimizar tu discapacidad para que te traten 'como a los demás'?", categoria: "capacitista" },
+      { texto: "¿Te han negado un seguro médico, de vida u otro servicio financiero, o te han cobrado tarifas mucho más altas por tener una discapacidad?", categoria: "capacitista" },
+      { texto: "¿Alguna autoridad te ha tratado con fuerza excesiva o te ha detenido de manera injustificada por no entender tu discapacidad?", categoria: "capacitista" },
+      { texto: "¿Has encontrado barreras para ejercer tus derechos cívicos (como votar o asistir a reuniones) por falta de adaptaciones en el lugar?", categoria: "capacitista" },
       { texto: "¿Has recibido comentarios hirientes que minimizan las dificultades reales de tu discapacidad en lugar de ofrecer comprensión?", categoria: "capacitista" },
-      { texto: "¿Te han rechazado como pareja o te han hecho sentir menos deseable por tener una discapacidad?", categoria: "capacitista" }
+      { texto: "¿Te han rechazado como pareja o te han hecho sentir que no eres deseable por tener una discapacidad?", categoria: "capacitista" }
     ];
 
     const preguntasCultural = [
       { texto: "¿Has sentido que tu nombre, acento o aspecto cultural te cerró puertas laborales?", categoria: "cultural" },
-      { texto: "¿Te han ofrecido un salario menor o peores condiciones por ser extranjero/a o de una cultura minoritaria?", categoria: "cultural" },
-      { texto: "¿Algún jefe o compañero se ha burlado de tu acento o forma de hablar, diciendo que 'debes mejorar tu idioma'?", categoria: "cultural" },
-      { texto: "¿Te han pedido requisitos extra o depósitos altos al alquilar una vivienda al saber que eres de otra cultura?", categoria: "cultural" },
+      { texto: "¿Te han ofrecido un salario más bajo o peores condiciones laborales por tu estatus migratorio o por pertenecer a una minoría cultural?", categoria: "cultural" },
+      { texto: "¿Algún jefe o compañero se ha burlado de tu forma de hablar o acento, diciendo que 'debes mejorar tu [idioma local]'?", categoria: "cultural" },
+      { texto: "¿Te han pedido requisitos extra o depósitos más altos al alquilar una vivienda al saber que eres extranjero/a o de otra cultura?", categoria: "cultural" },
       { texto: "¿Has recibido comentarios ofensivos o rechazo de vecinos por practicar tus costumbres tradicionales?", categoria: "cultural" },
-      { texto: "¿Te han negado el servicio en un establecimiento al notar que eres extranjero/a o perteneces a una minoría cultural?", categoria: "cultural" },
-      { texto: "¿En la calle te han gritado '¡Vete a tu país!' u otros insultos por tu acento o nacionalidad?", categoria: "cultural" },
-      { texto: "¿Has sentido temor de hablar tu lengua materna en público por recibir miradas hostiles?", categoria: "cultural" },
-      { texto: "¿Tus hijos o tú han enfrentado discriminación en la escuela por no dominar el idioma local o por su origen?", categoria: "cultural" },
+      { texto: "¿Te han negado el servicio en un establecimiento al percibir que eres extranjero/a o perteneces a una comunidad minoritaria?", categoria: "cultural" },
+      { texto: "¿En la calle te han gritado '¡Vete a tu país!' u otros insultos por tu acento, idioma o nacionalidad?", categoria: "cultural" },
+      { texto: "¿Has sentido temor de hablar tu lengua materna en público por recibir miradas hostiles o ser interrumpido/a?", categoria: "cultural" },
+      { texto: "¿Tus hijos o tú han enfrentado discriminación en la escuela por no dominar completamente el idioma local o por su origen cultural?", categoria: "cultural" },
       { texto: "¿En la escuela se han burlado de tu comida, vestimenta o festividades tradicionales, haciéndote sentir avergonzado/a de tu cultura?", categoria: "cultural" },
-      { texto: "¿Has notado que la policía te detiene o revisa más frecuentemente por tu apariencia extranjera?", categoria: "cultural" },
-      { texto: "¿Has tenido problemas para recibir atención médica adecuada por falta de intérprete o por asumir cosas sobre tu nacionalidad?", categoria: "cultural" },
-      { texto: "¿Te han excluido de actividades cívicas por no ser considerado/a 'de aquí' debido a tu origen?", categoria: "cultural" },
-      { texto: "¿Has sufrido explotación laboral (jornadas largas, pago injusto) por tu situación migratoria?", categoria: "cultural" },
+      { texto: "¿Has notado que la policía o autoridades te detienen o revisan con más frecuencia por tu apariencia extranjera?", categoria: "cultural" },
+      { texto: "¿Has tenido problemas para recibir atención médica adecuada por la falta de intérprete o por asumir cosas sobre tu nacionalidad?", categoria: "cultural" },
+      { texto: "¿Te han excluido de actividades cívicas o comunitarias por no ser considerado 'de aquí' por tu origen?", categoria: "cultural" },
+      { texto: "¿Has sufrido explotación laboral (jornadas excesivas o pago injusto) por tu situación migratoria?", categoria: "cultural" },
       { texto: "¿Sientes que debes esforzarte el doble para demostrar tu valía por venir de otra cultura o país?", categoria: "cultural" },
-      { texto: "¿Has perdido oportunidades de amistad o pareja por el rechazo de tu origen cultural?", categoria: "cultural" },
-      { texto: "¿Alguna oficina gubernamental complicó tus trámites al ver que eres inmigrante?", categoria: "cultural" },
-      { texto: "¿Te han negado ofertas de empleo o becas por no tener la nacionalidad local, aun cuando llevas tiempo residiendo en el país?", categoria: "cultural" },
+      { texto: "¿Has perdido oportunidades de amistad o pareja porque tu familia rechazó tu origen cultural?", categoria: "cultural" },
+      { texto: "¿Alguna oficina gubernamental manejó tus trámites de forma especialmente complicada al ver que eres inmigrante?", categoria: "cultural" },
+      { texto: "¿Te han negado ofertas de empleo, becas o programas públicos por no tener la nacionalidad local?", categoria: "cultural" },
       { texto: "¿En redes sociales has recibido mensajes de odio o burlas por tu idioma, acento o cultura?", categoria: "cultural" },
-      { texto: "¿Te han etiquetado despectivamente de 'extranjero' al participar en actividades locales?", categoria: "cultural" }
+      { texto: "¿Te han etiquetado de 'extranjero' de forma despectiva al participar en actividades locales o en línea?", categoria: "cultural" }
     ];
 
     const preguntasSocioeconomica = [
       { texto: "¿Vives o has vivido en un barrio con servicios deficientes por limitaciones económicas, sintiendo que las autoridades descuidan tu zona?", categoria: "socioeconomica" },
-      { texto: "¿Te han negado alquilar un departamento o exigido avales muy altos al saber que tus ingresos son bajos?", categoria: "socioeconomica" },
-      { texto: "Cuando eras niño/a, ¿sufriste burlas o aislamiento por no tener ropa de marca o dispositivos modernos?", categoria: "socioeconomica" },
-      { texto: "¿Te has visto obligado/a a abandonar estudios o trabajar desde joven para ayudar económicamente a tu familia?", categoria: "socioeconomica" },
-      { texto: "¿Te han juzgado al acudir a oficinas de asistencia social, como si abusaras del sistema por ser pobre?", categoria: "socioeconomica" },
+      { texto: "¿Te han negado alquilar un departamento o te han exigido avales muy altos al saber que tus ingresos son bajos o que provienes de una zona humilde?", categoria: "socioeconomica" },
+      { texto: "Cuando eras niño/a, ¿sufriste burlas o aislamiento por no tener ropa de marca o dispositivos modernos como tus compañeros?", categoria: "socioeconomica" },
+      { texto: "¿Te has visto obligado/a a abandonar estudios o trabajar desde muy joven para ayudar económicamente a tu familia sin apoyos estatales?", categoria: "socioeconomica" },
+      { texto: "¿Te han juzgado o tratado con desprecio al acudir a oficinas de asistencia social, como si abusaras del sistema por ser pobre?", categoria: "socioeconomica" },
       { texto: "¿En tiendas o centros comerciales, guardias te han seguido por tu apariencia sencilla, asumiendo que podrías robar?", categoria: "socioeconomica" },
       { texto: "¿Te han excluido de círculos sociales o eventos por no poder costear la cuota o el gasto que implican?", categoria: "socioeconomica" },
-      { texto: "¿Algún banco u otra institución te negó un préstamo o servicio básico al ver que provienes de una zona humilde?", categoria: "socioeconomica" },
+      { texto: "¿Algún banco u otra institución te negó un préstamo o servicio básico al ver que provienes de una zona humilde o tus ingresos son bajos?", categoria: "socioeconomica" },
       { texto: "¿Has sentido la necesidad de ocultar tu nivel de ingresos o lugar de residencia por miedo a ser juzgado/a?", categoria: "socioeconomica" },
       { texto: "En tu trabajo, ¿te han pagado por debajo del salario mínimo, sin contrato o prestaciones, aprovechándose de tu necesidad económica?", categoria: "socioeconomica" },
       { texto: "¿Has dejado de acudir al médico o comprar medicinas necesarias por no poder costearlos, poniendo en riesgo tu salud?", categoria: "socioeconomica" },
-      { texto: "¿Has quedado sin acceso a internet, computadora o smartphone en momentos clave por limitaciones económicas?", categoria: "socioeconomica" },
-      { texto: "¿Te han ignorado tus ideas en reuniones por no tener estudios superiores o cierto estatus económico?", categoria: "socioeconomica" },
+      { texto: "¿Te has quedado sin acceso a internet, computadora o smartphone en momentos clave por limitaciones económicas?", categoria: "socioeconomica" },
+      { texto: "¿Te han ignorado tus ideas en reuniones o discusiones por no tener estudios superiores o cierto estatus económico?", categoria: "socioeconomica" },
       { texto: "¿Has sido objeto de insultos o apodos crueles que resaltan tu situación económica, haciéndote sentir humillado/a?", categoria: "socioeconomica" },
       { texto: "¿Te has sentido inseguro/a en tu vivienda, con construcción precaria o en una zona peligrosa, sin posibilidad de mudarte?", categoria: "socioeconomica" },
-      { texto: "¿Al buscar ayuda, ¿te han culpado por no poder mantener a tu familia debido a tu situación económica?", categoria: "socioeconomica" },
+      { texto: "¿Al buscar ayuda, te han culpado por no poder mantener a tu familia, culpándote por tu situación económica?", categoria: "socioeconomica" },
       { texto: "¿En hospitales o clínicas públicas has recibido trato frío o deshumanizado al percibir que no puedes pagar servicios privados?", categoria: "socioeconomica" },
-      { texto: "¿Te han cobrado precios más altos o condiciones desfavorables en servicios (préstamos, compras a plazos) aprovechando tu necesidad?", categoria: "socioeconomica" },
-      { texto: "En el trabajo, ¿te han asignado los trabajos más duros o peligrosos por ser el empleado con menor poder de negociación?", categoria: "socioeconomica" },
-      { texto: "¿Has sentido que te tratan de forma diferente o con lástima en espacios exclusivos por tu nivel económico?", categoria: "socioeconomica" }
+      { texto: "¿Te han cobrado precios más altos o condiciones desfavorables en servicios (préstamos, compras a plazos) por aprovechar tu necesidad?", categoria: "socioeconomica" },
+      { texto: "En el trabajo, ¿te han asignado los trabajos más duros o peligrosos por ser el empleado con menos poder de negociación?", categoria: "socioeconomica" },
+      { texto: "¿Has sentido que te tratan de forma distinta o con lástima en eventos o espacios exclusivos debido a tu nivel económico?", categoria: "socioeconomica" }
     ];
 
     const preguntasEdad = [
-      { texto: "¿Alguna vez te han rechazado para un empleo diciendo que eras demasiado mayor, a pesar de tu experiencia?", categoria: "edad" },
-      { texto: "¿Te han negado un trabajo o pasantía por ser demasiado joven, aun cumpliendo los requisitos?", categoria: "edad" },
-      { texto: "En tu empleo, ¿han contratado a personas más jóvenes en lugar de promoverte a ti?", categoria: "edad" },
-      { texto: "¿Te han presionado para jubilarte o dejar el trabajo antes de lo que deseas por tu edad?", categoria: "edad" },
-      { texto: "¿Has sentido que tu salario o crecimiento profesional se estanca por considerarte 'demasiado mayor'?", categoria: "edad" },
-      { texto: "En entrevistas, ¿te han hecho comentarios sobre tu edad insinuando que podría ser un problema?", categoria: "edad" },
-      { texto: "¿Te han excluido de oportunidades de formación o capacitación por tu edad?", categoria: "edad" },
-      { texto: "En la atención médica, ¿algún doctor ha minimizado tus síntomas diciendo que 'son cosas de la edad'?", categoria: "edad" },
-      { texto: "¿Has tenido dificultades para obtener un seguro médico o de vida a un precio razonable por tu edad?", categoria: "edad" },
-      { texto: "¿Te han tratado con condescendencia por ser mayor, asumiendo que no entiendes tecnología o temas modernos?", categoria: "edad" },
-      { texto: "Si eres joven, ¿te han excluido de decisiones importantes por considerarte 'inmaduro'?", categoria: "edad" },
+      { texto: "¿Alguna vez te han rechazado para un empleo diciendo que eras demasiado mayor para el puesto, a pesar de estar capacitado/a?", categoria: "edad" },
+      { texto: "¿Te han negado un trabajo o pasantía por considerarte demasiado joven, aun cumpliendo los requisitos?", categoria: "edad" },
+      { texto: "En tu empleo, ¿has visto que contratan a personas más jóvenes con menos experiencia en lugar de promoverte a ti?", categoria: "edad" },
+      { texto: "¿Alguna vez te han presionado para jubilarte o te han sugerido que dejes el trabajo antes de lo que deseas por tu edad?", categoria: "edad" },
+      { texto: "¿Has sentido que tu salario o crecimiento profesional se estancó porque te consideran 'demasiado mayor' para avanzar?", categoria: "edad" },
+      { texto: "En entrevistas de trabajo, ¿te han hecho comentarios sobre tu edad insinuando que podría ser un problema?", categoria: "edad" },
+      { texto: "¿Te han excluido de oportunidades de formación o cursos de capacitación en tu trabajo por tu edad?", categoria: "edad" },
+      { texto: "En la atención médica, ¿algún doctor ha minimizado tus síntomas diciendo que 'son cosas de la edad' sin evaluar adecuadamente?", categoria: "edad" },
+      { texto: "¿Has tenido dificultades para obtener un seguro médico o de vida a un precio razonable por estar por encima de cierta edad?", categoria: "edad" },
+      { texto: "¿Te han tratado con condescendencia o como si no entendieras tecnología por ser mayor, sin respetar tus capacidades reales?", categoria: "edad" },
+      { texto: "Si eres joven, ¿te han excluido de decisiones importantes porque 'no eres lo suficientemente maduro'?", categoria: "edad" },
       { texto: "¿Te han dificultado alquilar una vivienda por ser muy joven, debido a la desconfianza de algunos propietarios?", categoria: "edad" },
       { texto: "¿Te has sentido fuera de lugar o rechazado/a en actividades sociales por tu edad?", categoria: "edad" },
-      { texto: "¿Te han impedido acceder a un crédito o financiamiento por ser menor de cierta edad, aun teniendo solvencia?", categoria: "edad" },
-      { texto: "¿Has sentido que los medios o la cultura popular te invisibilizan por tu edad?", categoria: "edad" },
-      { texto: "¿Te han negado participar en un proyecto o evento por exceder el rango de edad establecido, aun estando capacitado/a?", categoria: "edad" },
-      { texto: "Si eres mayor, ¿te han dificultado alquilar ciertos servicios (como coche o tours) por suposiciones sobre tu capacidad?", categoria: "edad" },
-      { texto: "¿Has recibido trato impaciente en establecimientos simplemente por pertenecer a una generación distinta?", categoria: "edad" },
-      { texto: "¿Has sido objeto de bromas o comentarios que ridiculizan a tu generación, haciéndote sentir menospreciado/a?", categoria: "edad" },
-      { texto: "¿Te han expulsado de algún sitio público (como centros comerciales) por ser muy joven debido a normas restrictivas?", categoria: "edad" },
+      { texto: "¿Te han impedido acceder a un crédito o financiamiento por ser menor de cierta edad, aun cuando tuvieras solvencia?", categoria: "edad" },
+      { texto: "¿Has sentido que los medios o la cultura popular te invisibilizan o estereotipan por tu edad?", categoria: "edad" },
+      { texto: "¿Te han negado participar en un proyecto o evento porque excedías el rango de edad establecido, a pesar de estar capacitado/a?", categoria: "edad" },
+      { texto: "Si eres mayor, ¿te han dificultado rentar ciertos servicios (como coche o tours) por asumir que no podrías hacerlo debido a tu edad?", categoria: "edad" },
+      { texto: "¿Has recibido trato impaciente en establecimientos simplemente por ser de una generación distinta?", categoria: "edad" },
+      { texto: "¿Has sido blanco de bromas o comentarios que ridiculizan a tu generación, haciéndote sentir menospreciado/a?", categoria: "edad" },
+      { texto: "¿Te han expulsado o prohibido la entrada a algún sitio público (como centros comerciales) por ser muy joven debido a normas restrictivas?", categoria: "edad" },
       { texto: "¿Alguna vez te han llamado 'boomer' o 'millennial' de forma peyorativa, haciendo que te sientas juzgado/a por tu edad?", categoria: "edad" }
     ];
 
     /********** FUNCIÓN PARA SELECCIONAR PREGUNTAS SEGÚN CONFIGURACIÓN **********/
     function obtenerPreguntasDeCategoria(preguntasArray, limite) {
       let copia = preguntasArray.slice();
+      // Si se definió un límite y es menor al total, se mezcla y se toma la cantidad indicada
       if (limite && limite < copia.length) {
         for (let i = copia.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
@@ -559,73 +491,62 @@
     });
 
     /********** PERSONAJE ALEATORIO **********/
-    // Se ha actualizado cada objeto para incluir "nombre"
     const personajes = [
       {
-        nombre: "Ana",
         skin: "#FCD7B8", bodyColor: "#8BC34A",
         extra1: { type: "hair", width: "60px", height: "30px", top: "-5px", background: "#8B4513", borderRadius: "50%" },
         mouthStyle: "smile",
         story: "¡Hola! Soy Ana, defensora de la igualdad y el acceso a la cultura."
       },
       {
-        nombre: "Beto",
         skin: "#8D5524", bodyColor: "#FF9800",
         extra1: null,
         mouthStyle: "neutral",
         story: "Soy Beto. Curioso y persistente, siempre en búsqueda de justicia en el trabajo."
       },
       {
-        nombre: "Carlos",
         skin: "#C68642", bodyColor: "#03A9F4",
         extra1: { type: "hair", width: "60px", height: "20px", top: "0px", background: "#BBB", borderRadius: "0 0 50% 50%" },
         mouthStyle: "smile",
         story: "Me llamo Carlos, profesor jubilado y defensor del derecho a una vida digna."
       },
       {
-        nombre: "Dalia",
         skin: "#F1C27D", bodyColor: "#FFC107",
         extra1: { type: "hair", width: "70px", height: "70px", top: "-5px", background: "#367C94", borderRadius: "50%" },
         mouthStyle: "neutral",
         story: "Soy Dalia, ingeniera y lucho por que se respeten las costumbres y creencias de todos."
       },
       {
-        nombre: "Ema",
         skin: "#FFDBAC", bodyColor: "#9C27B0",
         extra1: { type: "hat", width: "50px", height: "20px", top: "-10px", background: "#000", borderRadius: "5px" },
         mouthStyle: "smile",
         story: "¡Hey! Soy Ema, siempre con mi gorra de la suerte, comprometida con la justicia social."
       },
       {
-        nombre: "Flor",
         skin: "#FFD1DC", bodyColor: "#00BCD4",
         extra1: { type: "hair", width: "60px", height: "30px", top: "-5px", background: "#E91E63", borderRadius: "50%" },
         mouthStyle: "smile",
         story: "Soy Flor, mi cabello rosa refleja mi lucha por la igualdad en salud y educación."
       },
       {
-        nombre: "Guille",
         skin: "#FFE0BD", bodyColor: "#FF5722",
         extra1: { type: "glasses", top: "18px" },
         mouthStyle: "smile",
         story: "Hola, soy Guille. Con mis gafas siempre listas, defiendo el derecho a la información."
       },
       {
-        nombre: "Hiro",
         skin: "#F1C27D", bodyColor: "#4CAF50",
         extra1: { type: "hair", width: "50px", height: "50px", top: "0px", background: "#000", borderRadius: "50%" },
         mouthStyle: "neutral",
         story: "Me llamo Hiro, programador y amante de la tecnología, lucho por un acceso digital justo."
       },
       {
-        nombre: "Iris",
         skin: "#8D5524", bodyColor: "#795548",
         extra1: { type: "hair", width: "0", height: "0", borderLeft: "15px solid transparent", borderRight: "15px solid transparent", borderBottom: "30px solid #FFEB3B", top: "-15px", left: "50%", marginLeft: "-15px" },
         mouthStyle: "smile",
         story: "Soy Iris. Con mi silla de ruedas, demuestro que la movilidad es un derecho para todos."
       },
       {
-        nombre: "José",
         skin: "#C68642", bodyColor: "#FF5722",
         extra1: { type: "hair", width: "60px", height: "40px", top: "-10px", background: "#2F4F4F", borderRadius: "50%" },
         mouthStyle: "frown",
@@ -691,7 +612,7 @@
       charStoryEl.style.display = (charStoryEl.style.display === "none" || !charStoryEl.style.display) ? "block" : "none";
     });
 
-    /********** FONDO ALEATORIO Y DECORACIONES **********/
+    /********** FONDO ALEATORIO **********/
     const fondos = [
       "linear-gradient(135deg, #f3e5f5, #e1bee7)",
       "linear-gradient(135deg, #FFCDD2, #F8BBD0)",
@@ -699,51 +620,16 @@
       "linear-gradient(135deg, #BBDEFB, #90CAF9)",
       "linear-gradient(135deg, #FFF9C4, #FFF59D)"
     ];
-    const fondoSeleccionado = fondos[Math.floor(Math.random() * fondos.length)];
-    document.body.style.background = fondoSeleccionado;
-
-    /********** POPUP DE CUSTOMIZACIÓN **********/
-    const customBtn = document.getElementById("customBtn");
-    const customModal = document.getElementById("customModal");
-    const closeModal = document.querySelector(".modal .close");
-    customBtn.addEventListener("click", () => {
-      // Llenar datos en el modal
-      document.getElementById("currentFondo").textContent = fondoSeleccionado;
-      const fondoList = document.getElementById("fondoList");
-      fondoList.innerHTML = "";
-      fondos.forEach(f => {
-        const li = document.createElement("li");
-        li.textContent = f;
-        fondoList.appendChild(li);
-      });
-      const limitList = document.getElementById("limitList");
-      limitList.innerHTML = "";
-      for (const key in questionsLimit) {
-        const li = document.createElement("li");
-        li.textContent = key + ": " + (questionsLimit[key] === null ? "Todas" : questionsLimit[key]);
-        limitList.appendChild(li);
-      }
-      customModal.style.display = "block";
-    });
-    closeModal.addEventListener("click", () => {
-      customModal.style.display = "none";
-    });
-    window.addEventListener("click", (event) => {
-      if (event.target == customModal) {
-        customModal.style.display = "none";
-      }
-    });
+    document.body.style.background = fondos[Math.floor(Math.random() * fondos.length)];
 
     /********** BOTÓN DE RESULTADOS Y GRÁFICO **********/
     const submitBtn = document.getElementById("submitBtn");
     const resultChartEl = document.getElementById("resultChart");
     const screenshotMsgEl = document.getElementById("screenshotMsg");
-    const resultExplanationEl = document.getElementById("resultExplanation");
-    const finalMsgEl = document.getElementById("finalMsg");
     let radarChart;
 
     submitBtn.addEventListener("click", () => {
-      // Contabilizar respuestas "Sí" (si no se respondió, se asume "no")
+      // Recorrer todas las preguntas y contar "Sí" por categoría
       const resultados = {
         racial: 0,
         genero: 0,
@@ -754,6 +640,7 @@
         edad: 0
       };
       todasPreguntas.forEach((qObj, idx) => {
+        // Si no se seleccionó respuesta, se asume "no"
         const resp = document.querySelector('input[name="q' + idx + '"]:checked');
         if (resp && resp.value === "yes") {
           resultados[qObj.categoria]++;
@@ -810,16 +697,15 @@
         radarChart.update();
       }
       resultChartEl.style.display = "block";
-
-      // Generar instrucciones para screenshot según dispositivo
+      // Instrucciones para screenshot según dispositivo
       let instrucciones = "Recomendación: realiza una captura de pantalla de tus resultados.<br/>";
       const ua = navigator.userAgent || navigator.platform;
       if (/Windows/i.test(ua)) {
-        instrucciones += "En Windows: Presiona <b>Win + Impr Pant</b> o <b>Win + Shift + S</b>.";
+        instrucciones += "En Windows: Presiona <b>Win + Impr Pant</b> o <b>Win + Shift + S</b> para capturar.";
       } else if (/Mac/i.test(ua)) {
-        instrucciones += "En Mac: Presiona <b>Shift + ⌘ + 3</b> para la pantalla completa o <b>Shift + ⌘ + 4</b> para una parte.";
+        instrucciones += "En Mac: Presiona <b>Shift + ⌘ + 3</b> para capturar la pantalla completa o <b>Shift + ⌘ + 4</b> para una parte.";
       } else if (/Android/i.test(ua)) {
-        instrucciones += "En Android: Presiona <b>Volumen Abajo + Encendido</b> para capturar.";
+        instrucciones += "En Android: Presiona <b>Volumen Abajo + Encendido</b> para hacer una captura.";
       } else if (/iPhone|iPad|iPod/i.test(ua)) {
         instrucciones += "En iOS: Usa <b>Botón lateral + Botón de inicio</b> o <b>Botón lateral + Volumen Arriba</b> (según modelo).";
       } else {
@@ -827,26 +713,6 @@
       }
       screenshotMsgEl.innerHTML = instrucciones;
       screenshotMsgEl.style.display = "block";
-
-      // Generar una pequeña explicación basada en los resultados
-      let totalYes = datos.reduce((a, b) => a + b, 0);
-      let explanation = "";
-      if (totalYes === 0) {
-        explanation = "Tus respuestas indican que, en general, no has enfrentado barreras discriminatorias en estos ámbitos. ¡Felicidades!";
-      } else {
-        // Encontrar la categoría con mayor "Sí"
-        let maxVal = Math.max(...datos);
-        let maxIndex = datos.indexOf(maxVal);
-        let categoriaMax = etiquetas[maxIndex];
-        explanation = "Tus respuestas muestran que has experimentado mayores dificultades en el área de <strong>" + categoriaMax + "</strong> (" + maxVal + " afirmativas). Revisa el gráfico para más detalles.";
-      }
-      resultExplanationEl.innerHTML = explanation;
-      resultExplanationEl.style.display = "block";
-
-      // Mensaje final
-      finalMsgEl.textContent = "Test realizado con la supervisión de Dr. Igualdad y el personaje " + personaje.nombre + ".";
-      finalMsgEl.style.display = "block";
-
       resultChartEl.scrollIntoView({ behavior: "smooth" });
     });
 

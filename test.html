@@ -2,21 +2,21 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Blob con HTML y CSS</title>
+  <title>Blob con HTML/CSS - Generador con Seed</title>
   <style>
+    body {
+      text-align: center;
+      font-family: sans-serif;
+    }
     .blob {
       position: relative;
       width: 150px;
       height: 150px;
-      background: #8ecae6;
-      /* Con border-radius y clip-path se puede dar forma orgánica */
-      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-      margin: 50px auto;
+      margin: 20px auto;
       box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
     }
     .eye {
       position: absolute;
-      top: 45px;
       width: 20px;
       height: 20px;
       background: white;
@@ -25,44 +25,98 @@
     .eye::after {
       content: "";
       position: absolute;
-      top: 4px;
-      left: 6px;
       width: 8px;
       height: 8px;
       background: black;
       border-radius: 50%;
-    }
-    .eye.left {
-      left: 35px;
-    }
-    .eye.right {
-      right: 35px;
+      top: 4px;
+      left: 6px;
     }
     .arm {
       position: absolute;
       width: 40px;
       height: 10px;
-      background: #8ecae6;
-      top: 90px;
+      background: inherit;
       border-radius: 20px;
       transform-origin: left center;
-    }
-    .arm.left {
-      left: -30px;
-      transform: rotate(-20deg);
-    }
-    .arm.right {
-      right: -30px;
-      transform: rotate(20deg);
     }
   </style>
 </head>
 <body>
-  <div class="blob">
-    <div class="eye left"></div>
-    <div class="eye right"></div>
-    <div class="arm left"></div>
-    <div class="arm right"></div>
+  <h1>Generador de Blob con HTML/CSS</h1>
+  <div>
+    <label>Seed: <input type="number" id="seedInput" value="12345"></label>
+    <button onclick="generateBlob()">Generar Nuevo Blob</button>
   </div>
+  <div class="blob" id="blob">
+    <div class="eye" id="eyeLeft"></div>
+    <div class="eye" id="eyeRight"></div>
+    <div class="arm" id="armLeft"></div>
+    <div class="arm" id="armRight"></div>
+  </div>
+  <script>
+    // Generador pseudoaleatorio con semilla (Mulberry32)
+    function mulberry32(a) {
+      return function() {
+        var t = a += 0x6D2B79F5;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      }
+    }
+
+    function generateBlob() {
+      const seed = Number(document.getElementById('seedInput').value) || Date.now();
+      const rand = mulberry32(seed);
+
+      const blob = document.getElementById('blob');
+      // Generar valores aleatorios para el border-radius (8 valores: 4 horizontales y 4 verticales)
+      const tl = Math.floor(30 + rand()*40);
+      const tr = Math.floor(30 + rand()*40);
+      const br = Math.floor(30 + rand()*40);
+      const bl = Math.floor(30 + rand()*40);
+      const tlv = Math.floor(30 + rand()*40);
+      const trv = Math.floor(30 + rand()*40);
+      const brv = Math.floor(30 + rand()*40);
+      const blv = Math.floor(30 + rand()*40);
+      blob.style.background = `hsl(${Math.floor(rand()*360)}, 70%, 70%)`;
+      blob.style.borderRadius = `${tl}% ${tr}% ${br}% ${bl}% / ${tlv}% ${trv}% ${brv}% ${blv}%`;
+
+      // Ojos: ajustar tamaño y posición dentro de una zona superior del blob
+      const eyeLeft = document.getElementById('eyeLeft');
+      const eyeRight = document.getElementById('eyeRight');
+      const eyeSize = Math.floor(15 + rand()*10); // entre 15 y 25 px
+      eyeLeft.style.width = eyeSize + "px";
+      eyeLeft.style.height = eyeSize + "px";
+      eyeRight.style.width = eyeSize + "px";
+      eyeRight.style.height = eyeSize + "px";
+      const eyeLeftTop = Math.floor(30 + rand()*20);
+      const eyeLeftLeft = Math.floor(30 + rand()*10);
+      const eyeRightTop = Math.floor(30 + rand()*20);
+      const eyeRightRight = Math.floor(30 + rand()*10);
+      eyeLeft.style.top = eyeLeftTop + "px";
+      eyeLeft.style.left = eyeLeftLeft + "px";
+      eyeRight.style.top = eyeRightTop + "px";
+      eyeRight.style.right = eyeRightRight + "px";
+
+      // Brazos: posicionarlos lateralmente y aplicar rotación aleatoria
+      const armLeft = document.getElementById('armLeft');
+      const armRight = document.getElementById('armRight');
+      const armTop = Math.floor(70 + rand()*20);
+      armLeft.style.top = armTop + "px";
+      armRight.style.top = armTop + "px";
+      const armLeftLeft = -Math.floor(20 + rand()*20);
+      armLeft.style.left = armLeftLeft + "px";
+      const armRightRight = -Math.floor(20 + rand()*20);
+      armRight.style.right = armRightRight + "px";
+      const angleLeft = Math.floor(-30 + rand()*20);
+      const angleRight = Math.floor(10 + rand()*20);
+      armLeft.style.transform = `rotate(${angleLeft}deg)`;
+      armRight.style.transform = `rotate(${angleRight}deg)`;
+    }
+
+    // Generar blob inicial al cargar la página
+    generateBlob();
+  </script>
 </body>
 </html>
